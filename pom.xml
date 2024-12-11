@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.nlu</groupId>
-	<artifactId>tai-lieu-xanh</artifactId>
+	<artifactId>tai-lieu-xanh-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tai-lieu-xanh</name>
 	<description>Project for final term</description>

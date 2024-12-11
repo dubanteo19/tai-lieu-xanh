@@ -16,4 +16,5 @@ public class Comment extends AbstractModel {
     String content;
     @ManyToOne
     Comment parent;
+
 }
