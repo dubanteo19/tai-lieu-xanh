@@ -13,11 +13,16 @@ public class Post extends AbstractModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "author_id")
     User author;
     String title;
-    String content;
+    String thumb;
+    @OneToOne
+    @JoinColumn(name = "doc_id")
+    MDoc doc;
+    int download;
     int views;
-    @OneToMany
-    List<Comment> comments;
+
+
 }

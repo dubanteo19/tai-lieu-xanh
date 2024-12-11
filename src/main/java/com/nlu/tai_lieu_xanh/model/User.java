@@ -20,7 +20,7 @@ public class User {
     String email;
     String password;
     String avatar;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user.id")
-    List<Post> posts;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
+    List<Post> posts = new ArrayList<>();
 
 }
