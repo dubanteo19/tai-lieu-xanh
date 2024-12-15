@@ -15,4 +15,5 @@ public class Major {
     Integer id;
     @Column(nullable = false, unique = true)
     String name;
+
 }

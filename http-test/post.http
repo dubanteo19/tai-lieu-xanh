@@ -1,1 +1,18 @@
-GET localhost:8080/api/v1/posts
+### Create new post
+POST localhost:8080/api/v1/posts
+Content-Type: application/json
+
+{
+  "majorId": 3,
+  "description": "Tai lieu rat huu ich",
+  "authorId": 1,
+  "title": "Cau truc du lieu",
+  "tags": [
+    {
+      "tagName": "Lap Trinh"
+    },
+    {
+      "tagName": "IT"
+    }
+  ]
+}
