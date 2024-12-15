@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "comments")
 public class Comment extends AbstractModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,5 +17,8 @@ public class Comment extends AbstractModel {
     String content;
     @ManyToOne
     Comment parent;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    Post post;
 
 }
