@@ -1,0 +1,26 @@
+
+### Create a new major
+POST http://localhost:8080/api/v1/majors
+Content-Type: application/json
+
+{
+  "name": "Quản trị kinh doanh"
+}
+
+### Find all majors
+GET localhost:8080/api/v1/majors
+
+### Update major
+PUT http://localhost:8080/api/v1/majors/2
+Content-Type: application/json
+
+{
+  "name": "Công nghệ thông tin",
+  "majorId": 1
+}
+
+### Delete a major by major id
+DELETE localhost:8080/api/v1/majors/2
+
+### Seach major by name (Not works currently)
+GET localhost:8080/api/v1/majors/cong

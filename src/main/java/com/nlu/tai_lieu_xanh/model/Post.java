@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(name = "tables")
+@Table(name = "posts")
 
 public class Post extends AbstractModel {
     @Id
