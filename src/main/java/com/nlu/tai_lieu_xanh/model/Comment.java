@@ -20,5 +20,7 @@ public class Comment extends AbstractModel {
     @ManyToOne
     @JoinColumn(name = "post_id")
     Post post;
-
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
 }

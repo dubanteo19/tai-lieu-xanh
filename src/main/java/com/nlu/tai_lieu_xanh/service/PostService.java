@@ -29,8 +29,7 @@ public class PostService {
     public Post save(PostCreateRequest postRequest) {
         var post = postMapper.toPost(postRequest);
         var author = userRepository.findById(postRequest.authorId()).orElseThrow(UserNotFoundException::new);
-        post.setLikes(0);
         post.setAuthor(author);
-        postRepository.save(post);
+        return postRepository.save(post);
     }
 }

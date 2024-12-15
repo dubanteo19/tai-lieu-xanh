@@ -42,9 +42,7 @@ public class Post extends AbstractModel {
     List<Tag> tags = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     PostStatus postStatus;
-    @ColumnDefault(value = "0")
-    int views;
-    @ColumnDefault(value = "0")
-    int likes;
+    int views = 0;
+    int likes = 0;
 
 }
