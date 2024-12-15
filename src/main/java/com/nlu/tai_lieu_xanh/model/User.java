@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,11 @@ public class User {
     String password;
     String fullName;
     String avatar;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    UserStatus status = UserStatus.INACTIVE;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
     List<Post> posts = new ArrayList<>();
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    List<Comment> comments = new ArrayList<>();
 }

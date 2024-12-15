@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(name = "tables")
+@Table(name = "posts")
 
 public class Post extends AbstractModel {
     @Id
@@ -28,8 +28,8 @@ public class Post extends AbstractModel {
     @OneToOne
     @JoinColumn(name = "doc_id")
     MDoc doc;
-    @OneToOne
-    @JoinColumn(name = "majoy_id")
+    @ManyToOne
+    @JoinColumn(name = "major_id")
     Major major;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     List<Comment> comments = new ArrayList<>();
@@ -37,14 +37,13 @@ public class Post extends AbstractModel {
     @JoinTable(
             name = "post_tag",
             joinColumns = @JoinColumn(name = "post_id"),
+            foreignKey = @ForeignKey(name = "FK_POST_TAG_POST_ID"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     List<Tag> tags = new ArrayList<>();
     @Enumerated(EnumType.STRING)
-    PostStatus postStatus;
-    @ColumnDefault(value = "0")
-    int views;
-    @ColumnDefault(value = "0")
-    int likes;
+    PostStatus postStatus = PostStatus.REVIEWING;
+    int views = 0;
+    int likes = 0;
 
 }

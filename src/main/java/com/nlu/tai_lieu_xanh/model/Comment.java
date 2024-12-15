@@ -18,7 +18,12 @@ public class Comment extends AbstractModel {
     @ManyToOne
     Comment parent;
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id",
+            foreignKey = @ForeignKey(name = "FK_COMMENT_POST_ID"))
     Post post;
-
+    @ManyToOne
+    @JoinColumn(name = "user_id",
+            foreignKey = @ForeignKey(name = "FK_COMMENT_USER_ID")
+    )
+    User user;
 }

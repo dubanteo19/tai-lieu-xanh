@@ -13,5 +13,7 @@ public class Major {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
+    @Column(nullable = false, unique = true)
     String name;
+
 }
