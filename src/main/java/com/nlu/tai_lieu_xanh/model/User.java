@@ -2,11 +2,9 @@ package com.nlu.tai_lieu_xanh.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.usertype.UserType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +21,8 @@ public class User {
     String password;
     String fullName;
     String avatar;
+    @Enumerated(EnumType.STRING)
+    Role role = Role.USER;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     UserStatus status = UserStatus.INACTIVE;

@@ -32,17 +32,13 @@ public class TagService {
     }
 
 
-    public List<Tag> getOrSaveTags(List<TagRequest> tags) {
-        List<String> tagNames = tags.stream().map(TagRequest::tagName).collect(Collectors.toList());
+    public List<Tag> getOrSaveTags(List<String> tagNames) {
         var existingTags = tagRepository.findByNameIn(tagNames);
-        System.out.printf("Existing tags: %s", existingTags);
         var existingTagNames = existingTags.stream().map(Tag::getName).toList();
-        System.out.printf("Existing tagNames: %s", existingTagNames);
         var newTags = tagNames.stream()
                 .filter(tagName -> !existingTagNames.contains(tagName))
                 .map(this::save)
                 .toList();
-        System.out.printf("New tags: %s", newTags);
         existingTags.addAll(newTags);
         return existingTags;
     }

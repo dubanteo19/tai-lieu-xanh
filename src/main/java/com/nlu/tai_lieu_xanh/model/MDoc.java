@@ -1,14 +1,16 @@
 package com.nlu.tai_lieu_xanh.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "mdocs")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MDoc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +19,7 @@ public class MDoc {
     String url;
     @Enumerated(EnumType.STRING)
     FileType fileType;
-    int page;
+    int page = 0;
     long fileSize;
-    int downloads;
+    int downloads = 0;
 }

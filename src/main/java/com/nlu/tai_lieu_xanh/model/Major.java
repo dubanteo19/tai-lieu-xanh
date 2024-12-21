@@ -15,5 +15,7 @@ public class Major {
     Integer id;
     @Column(nullable = false, unique = true)
     String name;
-
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    MajorStatus majorStatus = MajorStatus.ACTIVE;
 }

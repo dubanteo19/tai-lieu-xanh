@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Table(name = "posts")
-
 public class Post extends AbstractModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +36,6 @@ public class Post extends AbstractModel {
     @JoinTable(
             name = "post_tag",
             joinColumns = @JoinColumn(name = "post_id"),
-            foreignKey = @ForeignKey(name = "FK_POST_TAG_POST_ID"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     List<Tag> tags = new ArrayList<>();

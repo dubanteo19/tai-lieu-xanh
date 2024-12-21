@@ -9,6 +9,6 @@ public record PostCreateRequest(
         String description,
         int authorId,
         int majorId,
-        List<TagRequest> tags
+        List<String> tags
 ) {
 }
