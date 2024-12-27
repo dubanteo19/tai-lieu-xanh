@@ -29,10 +29,12 @@ public class MajorLoader implements CommandLineRunner {
         var m3 = new MajorCreateRequest("Kế toán");
         var m4 = new MajorCreateRequest("Nông học");
         var m5 = new MajorCreateRequest("Công nghệ thông tin");
+        var m6 = new MajorCreateRequest("Thú y");
         majorService.save(m1);
         majorService.save(m2);
         majorService.save(m3);
         majorService.save(m4);
         majorService.save(m5);
+        majorService.save(m6);
     }
 }

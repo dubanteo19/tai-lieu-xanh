@@ -17,30 +17,34 @@ import java.io.OutputStream;
 public class FtpService {
     SessionFactory<FTPFile> ftpFileSessionFactory;
 
-    public String uploadFile(InputStream inputStream, Integer userId, String fileName) {
-        String remotePath = "/user-" + userId + "/" + fileName;
-        //Make new dir if user does not have a dir
+
+    public void downloadFile(String url, OutputStream outputStream) {
         try (var session = ftpFileSessionFactory.getSession()) {
-            if (!session.exists("/user-" + userId)) {
-                session.mkdir("/user-" + userId);
+            if (!session.exists(url)) {
+                throw new RuntimeException("file not found");
             }
-            //write file to ftp
+            session.dirty();
+            session.read(url, outputStream);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage()
+            );
+        }
+    }
+
+    public String uploadTempFile(InputStream inputStream, String fileName, Integer userId) {
+        System.out.println("--------------------uploadTempFile" + fileName);
+        var userFolder = "user-" + userId;
+        String remotePath = "/Docs/" + userFolder + "/" + fileName;
+        try (var session = ftpFileSessionFactory.getSession()) {
+            if (!session.exists("/Docs/" + userFolder)) {
+                session.mkdir("/Docs/" + userFolder);
+            }
             session.write(inputStream, remotePath);
+            session.close();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
         return remotePath;
     }
 
-    public void downloadFile(String remotePath, OutputStream outputStream) {
-        try (var session = ftpFileSessionFactory.getSession()) {
-            if (!session.exists(remotePath)) {
-                throw new RuntimeException("file not found");
-            }
-            session.read(remotePath, outputStream);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage()
-            );
-        }
-    }
 }

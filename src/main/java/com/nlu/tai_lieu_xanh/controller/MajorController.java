@@ -3,6 +3,8 @@ package com.nlu.tai_lieu_xanh.controller;
 
 import com.nlu.tai_lieu_xanh.dto.request.MajorCreateRequest;
 import com.nlu.tai_lieu_xanh.dto.request.MajorUpdateRequest;
+import com.nlu.tai_lieu_xanh.dto.response.post.MajorRes;
+import com.nlu.tai_lieu_xanh.dto.response.post.MajorWithPostsRes;
 import com.nlu.tai_lieu_xanh.model.Major;
 import com.nlu.tai_lieu_xanh.service.MajorService;
 import lombok.AccessLevel;
@@ -21,7 +23,7 @@ public class MajorController {
     MajorService majorService;
 
     @GetMapping
-    public ResponseEntity<List<Major>> getAllMajors() {
+    public ResponseEntity<List<MajorRes>> getAllMajors() {
         return ResponseEntity.ok(majorService.findAll());
     }
 

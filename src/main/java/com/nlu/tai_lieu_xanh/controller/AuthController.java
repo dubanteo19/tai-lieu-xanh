@@ -2,17 +2,15 @@ package com.nlu.tai_lieu_xanh.controller;
 
 import com.nlu.tai_lieu_xanh.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.dto.request.UserLoginRequest;
-import com.nlu.tai_lieu_xanh.dto.response.LoginRes;
-import com.nlu.tai_lieu_xanh.model.User;
+import com.nlu.tai_lieu_xanh.dto.response.auth.LoginRes;
+import com.nlu.tai_lieu_xanh.dto.response.auth.RegisterRes;
+import com.nlu.tai_lieu_xanh.dto.response.auth.VerifyRes;
 import com.nlu.tai_lieu_xanh.service.UserService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -22,8 +20,14 @@ public class AuthController {
     UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody UserCreateRequest request) {
+    public ResponseEntity<RegisterRes> register(@RequestBody UserCreateRequest request) {
         return ResponseEntity.ok(userService.register(request));
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<VerifyRes> verifyUser(@RequestParam("token") String token) {
+        return ResponseEntity.ok(
+                userService.verifyAccount(token));
     }
 
     @PostMapping("/login")

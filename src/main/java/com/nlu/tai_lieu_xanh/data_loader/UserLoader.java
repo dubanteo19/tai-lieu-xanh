@@ -29,8 +29,8 @@ public class UserLoader implements CommandLineRunner {
                 "minh@gmail.com", "Du Thanh Minh", "123");
         var registeredUser1 = userService.register(user1);
         var registeredUser2 = userService.register(user2);
-        userService.approveUser(registeredUser1.getId());
-        userService.approveUser(registeredUser2.getId());
+        userService.approveUser(registeredUser1.id());
+        userService.approveUser(registeredUser2.id());
     }
 }
 

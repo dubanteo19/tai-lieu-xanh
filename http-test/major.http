@@ -9,7 +9,7 @@ Content-Type: application/json
 
 ### Find all majors
 GET localhost:8080/api/v1/majors
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaW5oQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzM0ODA2MzQ0LCJleHAiOjE3MzQ4MDcyNDR9.ZO96TCfTh0wd_BNg1mke6SNtFhA9o7PAVBXdr-f6ASTCprFACwponhf1zq4HknQJG0ZGT_RsbgM9bVMkecOZ1g
+
 
 ### Update major
 PUT http://localhost:8080/api/v1/majors/2

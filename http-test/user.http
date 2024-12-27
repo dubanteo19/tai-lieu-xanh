@@ -8,11 +8,36 @@ Content-Type: application/json
   "password": "123456"
 }
 
+
+### Test api for update user password
+PUT http://localhost:8080/api/v1/users/2/update-password
+Content-Type: application/json
+
+{
+  "password": "123",
+  "newPassword": "12345"
+}
+
+### Test api for verify function
+GET http://localhost:8080/api/v1/auth/verify?token=4e07d2ac-91c4-4fab-8e9e-b887acef7524
+
+### Test api for update user info
+PUT http://localhost:8080/api/v1/users/2/info
+Content-Type: application/json
+
+{
+  "fullName": "Du Thanh Minh 2",
+  "bio": "toi la mot nguoi rat thich chia se"
+}
+
+### Test api for get user info
+GET http://localhost:8080/api/v1/users/2/info
+
 ### Test api for login function
 POST localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
   "email": "minh@gmail.com",
-  "password": "123456"
+  "password": "123"
 }

@@ -20,6 +20,8 @@ public class User {
     String email;
     String password;
     String fullName;
+    @Column(length = 300)
+    String bio;
     String avatar;
     @Enumerated(EnumType.STRING)
     Role role = Role.USER;
@@ -28,6 +30,13 @@ public class User {
     UserStatus status = UserStatus.INACTIVE;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
     List<Post> posts = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    List<User> friends = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     List<Comment> comments = new ArrayList<>();
 }

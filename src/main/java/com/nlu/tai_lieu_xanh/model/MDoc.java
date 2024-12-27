@@ -3,6 +3,7 @@ package com.nlu.tai_lieu_xanh.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Data
@@ -19,7 +20,11 @@ public class MDoc {
     String url;
     @Enumerated(EnumType.STRING)
     FileType fileType;
-    int page = 0;
-    long fileSize;
-    int downloads = 0;
+    @Column(name = "`pages`")
+    Integer pages;
+    Long fileSize;
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    Integer downloads = 0;
+
 }

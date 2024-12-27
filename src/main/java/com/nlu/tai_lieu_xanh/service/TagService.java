@@ -1,6 +1,8 @@
 package com.nlu.tai_lieu_xanh.service;
 
 import com.nlu.tai_lieu_xanh.dto.request.TagRequest;
+import com.nlu.tai_lieu_xanh.dto.response.post.TagRes;
+import com.nlu.tai_lieu_xanh.mapper.SharedConfig;
 import com.nlu.tai_lieu_xanh.model.Tag;
 import com.nlu.tai_lieu_xanh.repository.TagRepository;
 import lombok.AccessLevel;
@@ -41,5 +43,9 @@ public class TagService {
                 .toList();
         existingTags.addAll(newTags);
         return existingTags;
+    }
+
+    public List<TagRes> findAll() {
+        return tagRepository.findAll().stream().map(SharedConfig::toTagRes).toList();
     }
 }

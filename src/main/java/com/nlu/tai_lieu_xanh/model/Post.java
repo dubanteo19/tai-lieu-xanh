@@ -22,6 +22,8 @@ public class Post extends AbstractModel {
     @JoinColumn(name = "author_id")
     User author;
     String title;
+    @Lob
+    @Column(columnDefinition = "text")
     String description;
     String thumb;
     @OneToOne

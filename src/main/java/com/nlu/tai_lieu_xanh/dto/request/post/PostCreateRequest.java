@@ -1,6 +1,6 @@
-package com.nlu.tai_lieu_xanh.dto.request;
+package com.nlu.tai_lieu_xanh.dto.request.post;
 
-import com.nlu.tai_lieu_xanh.model.Post;
+import com.nlu.tai_lieu_xanh.dto.request.m.doc.MDocReq;
 
 import java.util.List;
 
