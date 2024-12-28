@@ -1,14 +1,17 @@
 package com.nlu.tai_lieu_xanh.service;
 
 import com.nlu.tai_lieu_xanh.dto.response.notification.NotificationRes;
+import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.mapper.SharedConfig;
 import com.nlu.tai_lieu_xanh.model.Notification;
 import com.nlu.tai_lieu_xanh.model.NotificationStatus;
 import com.nlu.tai_lieu_xanh.model.User;
 import com.nlu.tai_lieu_xanh.repository.NotificationRepository;
+import com.nlu.tai_lieu_xanh.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +22,10 @@ import java.util.List;
 public class NotificationService {
 
     NotificationRepository notificationRepository;
-    UserService userService;
+    UserRepository userRepository;
 
     public NotificationRes createNotification(Integer userId, String content) {
-        var user = userService.findById(userId);
+        var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setContent(content);
@@ -37,8 +40,9 @@ public class NotificationService {
 
     // Get unread notifications for a user
     public List<NotificationRes> getUnreadNotifications(Integer userId) {
-        var user = userService.findById(userId);
-        var notificationList = notificationRepository.findByUserAndStatus(user, NotificationStatus.UNREAD);
+        var user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        var notificationList = notificationRepository.findByUserAndStatus(user, NotificationStatus.UNREAD, sort);
         return notificationList.stream().map(this::toNotificationRes).toList();
     }
 
@@ -52,7 +56,8 @@ public class NotificationService {
 
     // Get all notifications for a user
     public List<NotificationRes> getAllNotifications(Integer userId) {
-        var user = userService.findById(userId);
-        return notificationRepository.findByUser(user).stream().map(this::toNotificationRes).toList();
+        var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        return notificationRepository.findByUser(user, sort).stream().map(this::toNotificationRes).toList();
     }
 }

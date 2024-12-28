@@ -8,6 +8,7 @@ import com.nlu.tai_lieu_xanh.dto.response.post.MajorWithPostsRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostDetailRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
 import com.nlu.tai_lieu_xanh.model.PostStatus;
+import com.nlu.tai_lieu_xanh.model.ReportReason;
 import com.nlu.tai_lieu_xanh.service.MajorService;
 import com.nlu.tai_lieu_xanh.service.PostService;
 import lombok.AccessLevel;
@@ -132,10 +133,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostByIdList(ids));
     }
 
-    //    @GetMapping("/{id}/report")
-//    public ResponseEntity<String> reportPost(@PathVariable Integer id) {
-//        return ResponseEntity.ok(postService.reportPost(id));
-//    }
     @GetMapping("/{id}/detail")
     public ResponseEntity<PostDetailRes> getPostDetailById(@PathVariable Integer id) {
         return ResponseEntity.ok(postService.findPostDetailById(id));
@@ -154,8 +151,10 @@ public class PostController {
     }
 
     @PostMapping("/{id}/reject")
-    public ResponseEntity<String> rejectPost(@PathVariable Integer id) {
-        postService.setPostStatus(id, PostStatus.REJECTED);
+    public ResponseEntity<String> rejectPost(@PathVariable Integer id,
+                                            @RequestParam String reason
+                                             ) {
+        postService.rejectPost(id, PostStatus.REJECTED,reason);
         return ResponseEntity.ok("post rejected");
     }
 

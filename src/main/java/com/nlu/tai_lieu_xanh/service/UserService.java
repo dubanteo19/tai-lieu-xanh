@@ -14,10 +14,7 @@ import com.nlu.tai_lieu_xanh.exception.EmailExistException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.mapper.PostMapper;
 import com.nlu.tai_lieu_xanh.mapper.UserMapper;
-import com.nlu.tai_lieu_xanh.model.PostStatus;
-import com.nlu.tai_lieu_xanh.model.User;
-import com.nlu.tai_lieu_xanh.model.UserStatus;
-import com.nlu.tai_lieu_xanh.model.VerificationToken;
+import com.nlu.tai_lieu_xanh.model.*;
 import com.nlu.tai_lieu_xanh.repository.PostRepository;
 import com.nlu.tai_lieu_xanh.repository.UserRepository;
 import com.nlu.tai_lieu_xanh.repository.VerificationRepository;
@@ -34,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -120,6 +118,7 @@ public class UserService {
         return user.getPosts()
                 .stream()
                 .filter(post -> post.getPostStatus() != PostStatus.DELETED)
+                .sorted(Comparator.comparing(Post::getCreatedDate).reversed())
                 .map(postMapper::toPostResponse).toList();
     }
 

@@ -27,7 +27,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +36,7 @@ public class PostService {
     PostRepository postRepository;
     UserRepository userRepository;
     MajorService majorService;
+    NotificationService notificationService;
     TagService tagService;
     MDocService mDocService;
     PostMapper postMapper = PostMapper.INSTANCE;
@@ -49,6 +49,7 @@ public class PostService {
                 .map(postMapper::toPostResponse)
                 .collect(Collectors.toList());
     }
+
     public List<PostResponse> findAllPost(Pageable pageable) {
         var spec = PostSpecification.isNotDeleted();
         return postRepository.findAll(spec, pageable)
@@ -89,6 +90,7 @@ public class PostService {
         post.setDoc(mdoc);
         post.setTags(tags);
         var savedPost = postRepository.save(post);
+        notificationService.createNotification(postRequest.authorId(), "Tài liệu của bạn đang được chờ duyệt");
         return postMapper.toPostDetailRes(savedPost);
     }
 
@@ -111,10 +113,9 @@ public class PostService {
                 .map(postMapper::toPostResponse).toList();
     }
 
-    public String delete(Integer id) {
+    public void delete(Integer id) {
         var post = findById(id);
         postRepository.delete(post);
-        return "Post deleted";
     }
 
     public List<PostResponse> findHostPosts() {
@@ -202,5 +203,12 @@ public class PostService {
                 .stream()
                 .map(postMapper::toPostResponse)
                 .collect(Collectors.toList());
+    }
+
+    public void rejectPost(Integer id, PostStatus postStatus, String reason) {
+        var post = findById(id);
+        var userId = post.getAuthor().getId();
+        post.setPostStatus(postStatus);
+        notificationService.createNotification(userId, "Tài liệu của bạn đã bị từ chối vì lý do %s".formatted(reason));
     }
 }

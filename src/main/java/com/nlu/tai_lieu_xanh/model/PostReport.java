@@ -1,5 +1,6 @@
 package com.nlu.tai_lieu_xanh.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.boot.convert.DataSizeUnit;
@@ -14,9 +15,11 @@ public class PostReport {
     private Integer id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "post_id")
     private Post post;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 

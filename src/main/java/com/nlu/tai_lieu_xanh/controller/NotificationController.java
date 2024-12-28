@@ -24,6 +24,11 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
+    @GetMapping("/user/{userId}/unread-count")
+    public ResponseEntity<List<NotificationRes>> getUnreadNotificationsCount(@PathVariable Integer userId) {
+        List<NotificationRes> notifications = notificationService.getUnreadNotifications(userId);
+        return ResponseEntity.ok(notifications);
+    }
     @GetMapping("/user/{userId}/all")
     public ResponseEntity<List<NotificationRes>> getAllNotifications(@PathVariable Integer userId) {
         List<NotificationRes> notifications = notificationService.getAllNotifications(userId);
@@ -39,7 +44,7 @@ public class NotificationController {
 
     @PostMapping("/create")
     public ResponseEntity<NotificationRes> createNotification(@RequestParam Integer userId,
-                                                           @RequestParam String content) {
+                                                              @RequestParam String content) {
         NotificationRes notification = notificationService.createNotification(userId, content);
         return ResponseEntity.ok(notification);
     }
