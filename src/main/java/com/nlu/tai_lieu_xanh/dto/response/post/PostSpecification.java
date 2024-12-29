@@ -41,7 +41,7 @@ public class PostSpecification {
             String likeKeyword = "%" + keyword.toLowerCase() + "%";
             return criteriaBuilder.or(
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), likeKeyword),
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), likeKeyword)
+                    criteriaBuilder.like(root.get("description"), likeKeyword)
             );
         };
     }

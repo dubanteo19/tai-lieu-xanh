@@ -15,6 +15,8 @@ public class Comment extends AbstractModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     String content;
+    @Enumerated(EnumType.STRING)
+    CommentStatus status = CommentStatus.ACTIVE;
     @ManyToOne
     @JoinColumn(name = "post_id")
     Post post;

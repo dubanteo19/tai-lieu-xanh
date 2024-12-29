@@ -150,6 +150,7 @@ public class PostService {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Specification<Post> spec = Specification.where(null);
         spec = spec.and(PostSpecification.isPublished());
+        System.out.println(keyword);
         Pageable pageable = PageRequest.of(page, size, sort);
         if (fileType != null) {
             spec = spec.and(PostSpecification.hasFileType(fileType));

@@ -99,6 +99,7 @@ public class PostController {
         return ResponseEntity.ok(postService.findRelatedPosts(postId));
     }
 
+
     @GetMapping("/hot")
     public ResponseEntity<List<PostResponse>> getHotPosts() {
         return ResponseEntity.ok(postService.findHostPosts());
@@ -152,9 +153,9 @@ public class PostController {
 
     @PostMapping("/{id}/reject")
     public ResponseEntity<String> rejectPost(@PathVariable Integer id,
-                                            @RequestParam String reason
-                                             ) {
-        postService.rejectPost(id, PostStatus.REJECTED,reason);
+                                             @RequestParam String reason
+    ) {
+        postService.rejectPost(id, PostStatus.REJECTED, reason);
         return ResponseEntity.ok("post rejected");
     }
 

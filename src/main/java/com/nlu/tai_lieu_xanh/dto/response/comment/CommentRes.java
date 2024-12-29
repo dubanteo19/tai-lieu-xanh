@@ -6,6 +6,7 @@ public record CommentRes(
         Integer id,
         Author author,
         String content,
-        String createdDate
+        String createdDate,
+        String status
 ) {
 }

@@ -1,5 +1,6 @@
 package com.nlu.tai_lieu_xanh.controller;
 
+import com.nlu.tai_lieu_xanh.dto.request.RequestTokenReq;
 import com.nlu.tai_lieu_xanh.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.dto.request.UserLoginRequest;
 import com.nlu.tai_lieu_xanh.dto.response.auth.LoginRes;
@@ -28,6 +29,17 @@ public class AuthController {
     public ResponseEntity<VerifyRes> verifyUser(@RequestParam("token") String token) {
         return ResponseEntity.ok(
                 userService.verifyAccount(token));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        userService.forgotPassword(email);
+        return ResponseEntity.ok("New password sent to email");
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginRes> refresh(@RequestBody RequestTokenReq request) {
+        return ResponseEntity.ok(userService.refreshToken(request));
     }
 
     @PostMapping("/login")

@@ -1,21 +1,12 @@
 package com.nlu.tai_lieu_xanh.controller;
 
-import com.nlu.tai_lieu_xanh.dto.request.UserCreateRequest;
-import com.nlu.tai_lieu_xanh.dto.request.UserLoginRequest;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
-import com.nlu.tai_lieu_xanh.dto.response.user.UserInfoRes;
-import com.nlu.tai_lieu_xanh.dto.response.user.UserPostsRes;
-import com.nlu.tai_lieu_xanh.dto.response.user.UserUpdateInfoReq;
-import com.nlu.tai_lieu_xanh.dto.response.user.UserUpdatePasswordReq;
-import com.nlu.tai_lieu_xanh.model.PostStatus;
-import com.nlu.tai_lieu_xanh.model.User;
+import com.nlu.tai_lieu_xanh.dto.response.user.*;
+import com.nlu.tai_lieu_xanh.model.UserStatus;
 import com.nlu.tai_lieu_xanh.service.UserService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,11 +25,23 @@ public class UserController {
         return ResponseEntity.ok(userService.findInfoById(id));
     }
 
+    @GetMapping()
+    public ResponseEntity<List<UserRes>> findAllUser() {
+        return ResponseEntity.ok(userService.findAll());
+    }
 
     @PutMapping("/{id}/update-password")
     public ResponseEntity<UserInfoRes>
     updatePassword(@PathVariable Integer id, @RequestBody UserUpdatePasswordReq userUpdatePasswordReq) {
         return ResponseEntity.ok(userService.updatePassword(id, userUpdatePasswordReq));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<UserInfoRes> updateStatus(
+            @PathVariable Integer id,
+            @RequestParam UserStatus status
+    ) {
+        return ResponseEntity.ok(userService.updateStatus(id,status));
     }
 
     @PutMapping("/{id}/info")

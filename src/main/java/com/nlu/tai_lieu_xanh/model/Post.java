@@ -35,8 +35,7 @@ public class Post extends AbstractModel {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     List<Comment> comments = new ArrayList<>();
     @ManyToMany
-    @JoinTable(
-            name = "post_tag",
+    @JoinTable( name = "post_tag",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )

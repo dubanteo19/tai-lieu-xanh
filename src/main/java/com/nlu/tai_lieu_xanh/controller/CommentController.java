@@ -21,6 +21,17 @@ import java.util.List;
 public class CommentController {
     CommentService commentService;
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteComment(@PathVariable Integer id) {
+        commentService.deleteComment(id);
+        return ResponseEntity.ok("Comment deleted");
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CommentRes>> getAllComments() {
+        return ResponseEntity.ok(commentService.getAllComments());
+    }
+
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentRes>> getComments(@PathVariable Integer postId) {
         return ResponseEntity.ok(commentService.getAllCommentsByPostId(postId));

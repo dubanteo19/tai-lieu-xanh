@@ -6,11 +6,13 @@ import com.nlu.tai_lieu_xanh.dto.request.comment.CommentUpdateReq;
 import com.nlu.tai_lieu_xanh.dto.response.comment.CommentRes;
 import com.nlu.tai_lieu_xanh.mapper.CommentMapper;
 import com.nlu.tai_lieu_xanh.model.Comment;
+import com.nlu.tai_lieu_xanh.model.CommentStatus;
 import com.nlu.tai_lieu_xanh.model.User;
 import com.nlu.tai_lieu_xanh.repository.CommentRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -58,6 +60,12 @@ public class CommentService {
         return commentMapper.toCommentRes(commentRepository.save(currentComment));
     }
 
+    public void deleteComment(Integer commentId) {
+        var comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("comment not found"));
+        comment.setStatus(CommentStatus.DELETED);
+        commentRepository.save(comment);
+    }
+
     public void deleteComment(Integer postId, CommentDeleteReq req) {
         if (!postId.equals(req.postId())) {
             throw new IllegalArgumentException("postId is not match");
@@ -68,5 +76,10 @@ public class CommentService {
         }
         var comment = commentRepository.findById(req.commentId()).orElseThrow(() -> new IllegalArgumentException("comment not found"));
         commentRepository.deleteById(comment.getId());
+    }
+
+    public List<CommentRes> getAllComments() {
+        return commentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdDate"))
+                .stream().map(commentMapper::toCommentRes).collect(Collectors.toList());
     }
 }

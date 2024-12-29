@@ -1,18 +1,17 @@
 package com.nlu.tai_lieu_xanh.service;
 
+import com.nlu.tai_lieu_xanh.dto.request.RequestTokenReq;
 import com.nlu.tai_lieu_xanh.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.dto.request.UserLoginRequest;
 import com.nlu.tai_lieu_xanh.dto.response.auth.LoginRes;
 import com.nlu.tai_lieu_xanh.dto.response.auth.RegisterRes;
 import com.nlu.tai_lieu_xanh.dto.response.auth.VerifyRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
-import com.nlu.tai_lieu_xanh.dto.response.user.UserInfoRes;
-import com.nlu.tai_lieu_xanh.dto.response.user.UserPostsRes;
-import com.nlu.tai_lieu_xanh.dto.response.user.UserUpdateInfoReq;
-import com.nlu.tai_lieu_xanh.dto.response.user.UserUpdatePasswordReq;
+import com.nlu.tai_lieu_xanh.dto.response.user.*;
 import com.nlu.tai_lieu_xanh.exception.EmailExistException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.mapper.PostMapper;
+import com.nlu.tai_lieu_xanh.mapper.SharedConfig;
 import com.nlu.tai_lieu_xanh.mapper.UserMapper;
 import com.nlu.tai_lieu_xanh.model.*;
 import com.nlu.tai_lieu_xanh.repository.PostRepository;
@@ -33,7 +32,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.random.RandomGenerator;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -74,6 +76,19 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
+    private String generateRandomPassword(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            password.append(characters.charAt(index));
+        }
+
+        return password.toString();
+    }
+
     public VerifyRes verifyAccount(String token) {
         System.out.println(token);
         var verificationToken = verificationRepository.findByToken((token)).orElseThrow(() -> new BadCredentialsException("Invalid token"));
@@ -91,6 +106,9 @@ public class UserService {
         }
         if (user.getStatus() == UserStatus.INACTIVE) {
             return new LoginRes("inactive", "", "", "", "", user.getId(), user.getEmail(), "");
+        }
+        if (user.getStatus() == UserStatus.BAN) {
+            return new LoginRes("ban", "", "", "", "", user.getId(), user.getEmail(), "");
         }
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
         String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
@@ -161,5 +179,66 @@ public class UserService {
         }
         post.setPostStatus(PostStatus.DELETED);
         postRepository.save(post);
+    }
+
+    public UserRes toUserRes(User user) {
+        return new UserRes(user.getId(), user.getEmail(), user.getFullName()
+                , user.getComments().size(), user.getPosts().size()
+                , user.getStatus().toString()
+        );
+    }
+
+    public List<UserRes> findAll() {
+        return userRepository.findAll().stream().map(this::toUserRes).collect(Collectors.toList());
+    }
+
+    public UserInfoRes updateStatus(Integer id, UserStatus status) {
+        var user = findById(id);
+        user.setStatus(status);
+        return userMapper.toUserRes(userRepository.save(user));
+    }
+
+    public LoginRes refreshToken(RequestTokenReq request) {
+        // Validate the refresh token
+        if (!jwtUtil.validateToken(request.refreshToken())) {
+            throw new IllegalArgumentException("Invalid or expired refresh token");
+        }
+        // Extract the user's email from the refresh token
+        String email = jwtUtil.getUsername(request.refreshToken());
+        // Retrieve the user by email
+        User user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // Generate new tokens
+        String newAccessToken = jwtUtil.generateToken(user.getEmail(), user.getRole());
+        String newRefreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+
+        // Return the response
+        LoginRes response = new LoginRes(
+                "active",
+                user.getFullName(),
+                user.getBio(),
+                newAccessToken,
+                newRefreshToken,
+                user.getId(),
+                user.getEmail(),
+                user.getAvatar()
+        );
+
+        return response;
+    }
+
+    public void forgotPassword(String email) {
+        var user = userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
+        String newPassword = generateRandomPassword(8);
+        user.setPassword(newPassword);
+        try {
+            mailService.sendPasswordResetEmail(email,newPassword);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        userRepository.save(user);
     }
 }
