@@ -1,6 +1,8 @@
 package com.nlu.tai_lieu_xanh.service;
 
 import com.nlu.tai_lieu_xanh.dto.request.TagRequest;
+import com.nlu.tai_lieu_xanh.dto.response.post.TagRes;
+import com.nlu.tai_lieu_xanh.mapper.SharedConfig;
 import com.nlu.tai_lieu_xanh.model.Tag;
 import com.nlu.tai_lieu_xanh.repository.TagRepository;
 import lombok.AccessLevel;
@@ -32,18 +34,18 @@ public class TagService {
     }
 
 
-    public List<Tag> getOrSaveTags(List<TagRequest> tags) {
-        List<String> tagNames = tags.stream().map(TagRequest::tagName).collect(Collectors.toList());
+    public List<Tag> getOrSaveTags(List<String> tagNames) {
         var existingTags = tagRepository.findByNameIn(tagNames);
-        System.out.printf("Existing tags: %s", existingTags);
         var existingTagNames = existingTags.stream().map(Tag::getName).toList();
-        System.out.printf("Existing tagNames: %s", existingTagNames);
         var newTags = tagNames.stream()
                 .filter(tagName -> !existingTagNames.contains(tagName))
                 .map(this::save)
                 .toList();
-        System.out.printf("New tags: %s", newTags);
         existingTags.addAll(newTags);
         return existingTags;
+    }
+
+    public List<TagRes> findAll() {
+        return tagRepository.findAll().stream().map(SharedConfig::toTagRes).toList();
     }
 }

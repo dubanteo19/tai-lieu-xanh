@@ -15,15 +15,12 @@ public class Comment extends AbstractModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     String content;
+    @Enumerated(EnumType.STRING)
+    CommentStatus status = CommentStatus.ACTIVE;
     @ManyToOne
-    Comment parent;
-    @ManyToOne
-    @JoinColumn(name = "post_id",
-            foreignKey = @ForeignKey(name = "FK_COMMENT_POST_ID"))
+    @JoinColumn(name = "post_id")
     Post post;
     @ManyToOne
-    @JoinColumn(name = "user_id",
-            foreignKey = @ForeignKey(name = "FK_COMMENT_USER_ID")
-    )
+    @JoinColumn(name = "user_id")
     User user;
 }

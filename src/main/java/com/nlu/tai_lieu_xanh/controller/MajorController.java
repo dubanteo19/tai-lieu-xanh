@@ -3,6 +3,10 @@ package com.nlu.tai_lieu_xanh.controller;
 
 import com.nlu.tai_lieu_xanh.dto.request.MajorCreateRequest;
 import com.nlu.tai_lieu_xanh.dto.request.MajorUpdateRequest;
+import com.nlu.tai_lieu_xanh.dto.response.post.MajorRes;
+import com.nlu.tai_lieu_xanh.dto.response.post.MajorWithPostsRes;
+import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
+import com.nlu.tai_lieu_xanh.dto.response.tag.TagWithPostsRes;
 import com.nlu.tai_lieu_xanh.model.Major;
 import com.nlu.tai_lieu_xanh.service.MajorService;
 import lombok.AccessLevel;
@@ -21,7 +25,7 @@ public class MajorController {
     MajorService majorService;
 
     @GetMapping
-    public ResponseEntity<List<Major>> getAllMajors() {
+    public ResponseEntity<List<MajorRes>> getAllMajors() {
         return ResponseEntity.ok(majorService.findAll());
     }
 
@@ -39,10 +43,19 @@ public class MajorController {
     @PutMapping("/{majorId}")
     public ResponseEntity<Major> updateMajor(@PathVariable Integer majorId,
                                              @RequestBody MajorUpdateRequest request) {
-        if (majorId.equals(request.majorId())) {
+        if (!majorId.equals(request.majorId())) {
             throw new IllegalArgumentException("Major id mismatch");
         }
         return ResponseEntity.ok(majorService.update(majorId, request));
+    }
+
+    @GetMapping("/tag-with-post")
+    public ResponseEntity<List<TagWithPostsRes>> getTagWithPost() {
+        return ResponseEntity.ok(majorService.getTagWithPost());
+    }
+    @GetMapping("/major-with-post")
+    public ResponseEntity<List<MajorWithPostsRes>> getMajorWithPost() {
+        return ResponseEntity.ok(majorService.getMajorWithPost());
     }
 
     @PostMapping

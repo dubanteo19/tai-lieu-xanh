@@ -1,3 +1,10 @@
+### Get all post;
+GET localhost:8080/api/v1/posts
+
+### Get post detail
+
+GET localhost:8080/api/v1/posts/1/detail
+
 ### Create new post
 POST localhost:8080/api/v1/posts
 Content-Type: application/json
@@ -8,11 +15,7 @@ Content-Type: application/json
   "authorId": 1,
   "title": "Cau truc du lieu",
   "tags": [
-    {
-      "tagName": "Lap Trinh"
-    },
-    {
-      "tagName": "IT"
-    }
+    "Lap Trinh",
+    "AT"
   ]
 }

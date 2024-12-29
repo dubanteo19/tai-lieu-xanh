@@ -10,6 +10,7 @@ Content-Type: application/json
 ### Find all majors
 GET localhost:8080/api/v1/majors
 
+
 ### Update major
 PUT http://localhost:8080/api/v1/majors/2
 Content-Type: application/json

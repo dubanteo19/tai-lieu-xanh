@@ -10,19 +10,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.io.Serializable;
 
 @Configuration
-@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
-public class AppConfig implements WebMvcConfigurer {
+public class AppConfig {
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder(12);
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*");
-
-    }
 }

@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Table(name = "posts")
-
 public class Post extends AbstractModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +22,8 @@ public class Post extends AbstractModel {
     @JoinColumn(name = "author_id")
     User author;
     String title;
+    @Lob
+    @Column(columnDefinition = "text")
     String description;
     String thumb;
     @OneToOne
@@ -34,10 +35,8 @@ public class Post extends AbstractModel {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
     List<Comment> comments = new ArrayList<>();
     @ManyToMany
-    @JoinTable(
-            name = "post_tag",
+    @JoinTable( name = "post_tag",
             joinColumns = @JoinColumn(name = "post_id"),
-            foreignKey = @ForeignKey(name = "FK_POST_TAG_POST_ID"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     List<Tag> tags = new ArrayList<>();
