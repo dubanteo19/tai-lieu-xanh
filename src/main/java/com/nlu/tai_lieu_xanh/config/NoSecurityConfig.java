@@ -15,27 +15,24 @@ import java.util.List;
 @Configuration
 @Profile("insecure")
 public class NoSecurityConfig {
-    @Bean(name = "insecure")
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers("/**").permitAll()
-                )
-                .cors(c -> {
-                    CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOriginPatterns(List.of("*")); // Allow all localhost origins
-                    configuration.setAllowedMethods(List.of("*"));
-                    configuration.setAllowedHeaders(List.of("*")); // Allow all headers
-                    configuration.setAllowCredentials(true); // Allow cookies/auth headers if needed
-                    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                    source.registerCorsConfiguration("/**", configuration);
-                    c.configurationSource(source);
+  @Bean(name = "insecure")
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+            .requestMatchers("/**").permitAll())
+        .cors(c -> {
+          CorsConfiguration configuration = new CorsConfiguration();
+          configuration.setAllowedOriginPatterns(List.of("*")); // Allow all localhost origins
+          configuration.setAllowedMethods(List.of("*"));
+          configuration.setAllowedHeaders(List.of("*")); // Allow all headers
+          configuration.setAllowCredentials(true); // Allow cookies/auth headers if needed
+          UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+          source.registerCorsConfiguration("/**", configuration);
+          c.configurationSource(source);
 
-                })
-                .csrf(CsrfConfigurer::disable);
+        })
+        .csrf(CsrfConfigurer::disable);
 
-
-        return http.build();
-    }
+    return http.build();
+  }
 }

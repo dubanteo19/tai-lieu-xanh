@@ -1,5 +1,18 @@
 package com.nlu.tai_lieu_xanh.service;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.nlu.tai_lieu_xanh.dto.request.RequestTokenReq;
 import com.nlu.tai_lieu_xanh.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.dto.request.UserLoginRequest;
@@ -7,35 +20,27 @@ import com.nlu.tai_lieu_xanh.dto.response.auth.LoginRes;
 import com.nlu.tai_lieu_xanh.dto.response.auth.RegisterRes;
 import com.nlu.tai_lieu_xanh.dto.response.auth.VerifyRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
-import com.nlu.tai_lieu_xanh.dto.response.user.*;
+import com.nlu.tai_lieu_xanh.dto.response.user.UserInfoRes;
+import com.nlu.tai_lieu_xanh.dto.response.user.UserRes;
+import com.nlu.tai_lieu_xanh.dto.response.user.UserUpdatePasswordReq;
 import com.nlu.tai_lieu_xanh.exception.EmailExistException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.mapper.PostMapper;
-import com.nlu.tai_lieu_xanh.mapper.SharedConfig;
 import com.nlu.tai_lieu_xanh.mapper.UserMapper;
-import com.nlu.tai_lieu_xanh.model.*;
+import com.nlu.tai_lieu_xanh.model.Post;
+import com.nlu.tai_lieu_xanh.model.PostStatus;
+import com.nlu.tai_lieu_xanh.model.User;
+import com.nlu.tai_lieu_xanh.model.UserStatus;
+import com.nlu.tai_lieu_xanh.model.VerificationToken;
 import com.nlu.tai_lieu_xanh.repository.PostRepository;
 import com.nlu.tai_lieu_xanh.repository.UserRepository;
 import com.nlu.tai_lieu_xanh.repository.VerificationRepository;
 import com.nlu.tai_lieu_xanh.utils.JwtUtil;
+
 import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.random.RandomGenerator;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service

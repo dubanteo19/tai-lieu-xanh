@@ -10,25 +10,25 @@ import org.springframework.integration.ftp.session.DefaultFtpSessionFactory;
 
 @Configuration
 public class FtpConfig {
-    @Value("${ftp.host}")
-    private String ftpHost;
+  @Value("${ftp.host}")
+  private String ftpHost;
 
-    @Value("${ftp.port}")
-    private int ftpPort;
+  @Value("${ftp.port}")
+  private int ftpPort;
 
-    @Value("${ftp.user}")
-    private String ftpUser;
+  @Value("${ftp.user}")
+  private String ftpUser;
 
-    @Value("${ftp.password}")
-    private String ftpPassword;
+  @Value("${ftp.password}")
+  private String ftpPassword;
 
-    @Bean
-    public SessionFactory<FTPFile> ftpFileSessionFactory() {
-        DefaultFtpSessionFactory sessionFactory = new DefaultFtpSessionFactory();
-        sessionFactory.setHost(ftpHost);
-        sessionFactory.setPort(ftpPort);
-        sessionFactory.setUsername(ftpUser);
-        sessionFactory.setPassword(ftpPassword);
-        return new CachingSessionFactory<>(sessionFactory);
-    }
+  @Bean
+  SessionFactory<FTPFile> ftpFileSessionFactory() {
+    DefaultFtpSessionFactory sessionFactory = new DefaultFtpSessionFactory();
+    sessionFactory.setHost(ftpHost);
+    sessionFactory.setPort(ftpPort);
+    sessionFactory.setUsername(ftpUser);
+    sessionFactory.setPassword(ftpPassword);
+    return new CachingSessionFactory<>(sessionFactory);
+  }
 }
