@@ -27,12 +27,20 @@ public class SecurityConfig {
     this.jwtFilter = jwtFilter;
   }
 
+  public static final List<String> PUBLIC_ENDPOINTS = List.of(
+      "/majors/**",
+      "/documents/**",
+      "/posts/**",
+      "/tags/**",
+      "/reports/**");
+
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers(PublicEndpoints.ENDPOINTS.toArray(new String[0])).permitAll()
+            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers(PUBLIC_ENDPOINTS.toArray(new String[0])).permitAll()
             .requestMatchers("/user/**").hasRole("USER")
             .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated())
@@ -50,8 +58,8 @@ public class SecurityConfig {
     var configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(List.of("http://localhost:5173"));
     configuration.setAllowedMethods(List.of("*"));
-    configuration.setAllowedHeaders(List.of("*")); // Allow all headers
-    configuration.setAllowCredentials(true); // Allow cookies/auth headers if needed
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;

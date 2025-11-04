@@ -38,16 +38,10 @@ public class JwtFilter extends OncePerRequestFilter {
       if (jwtUtil.validateToken(token)) {
         var authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
             userDetails.getAuthorities());
-        System.out.println(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
       }
     }
     filterChain.doFilter(request, response);
   }
 
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) {
-    String path = request.getServletPath();
-    return path.startsWith("/api/v1/auth/"); // Exclude all auth endpoints
-  }
 }

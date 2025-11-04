@@ -44,15 +44,10 @@
             <artifactId>spring-security-crypto</artifactId>
             <version>6.3.0</version>
         </dependency>
-      <dependency>
-  <groupId>io.minio</groupId>
-  <artifactId>minio</artifactId>
-  <version>8.5.10</version>
-</dependency>
         <dependency>
-            <groupId>org.springframework.integration</groupId>
-            <artifactId>spring-integration-ftp</artifactId>
-            <version>5.5.17</version> <!-- Use the latest version -->
+          <groupId>io.minio</groupId>
+          <artifactId>minio</artifactId>
+          <version>8.5.10</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -129,6 +124,10 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-amqp</artifactId>
+      </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -149,6 +148,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sejda.imageio</groupId>
+            <artifactId>webp-imageio</artifactId>
+            <version>0.1.6</version>
         </dependency>
     </dependencies>
 

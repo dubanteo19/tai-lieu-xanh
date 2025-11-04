@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nlu.tai_lieu_xanh.dto.request.post.PostCreateRequest;
+import com.nlu.tai_lieu_xanh.dto.response.mdoc.PresignedUrlRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.MajorWithPostsRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostDetailRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
@@ -95,17 +93,13 @@ public class PostController {
 
   @GetMapping("/hot")
   public ResponseEntity<List<PostResponse>> getHotPosts() {
-    return ResponseEntity.ok(postService.findHostPosts());
+    return ResponseEntity.ok(postService.findHotPosts());
   }
 
   @GetMapping("/{id}/download")
-  public ResponseEntity<StreamingResponseBody> downloadDocument(@PathVariable Integer id) {
-    StreamingResponseBody streamingResponseBody = postService.download(id).a;
-    String fileName = postService.download(id).b;
-    return ResponseEntity.ok()
-        .contentType(MediaType.APPLICATION_PDF)
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"") // Force download
-        .body(streamingResponseBody);
+  public ResponseEntity<PresignedUrlRes> downloadDocument(@PathVariable Integer id) {
+    var presignedUrl = postService.download(id);
+    return ResponseEntity.ok(presignedUrl);
   }
 
   @GetMapping("/search")
