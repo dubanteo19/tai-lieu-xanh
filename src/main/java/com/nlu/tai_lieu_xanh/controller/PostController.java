@@ -18,12 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nlu.tai_lieu_xanh.domain.post.PostStatus;
 import com.nlu.tai_lieu_xanh.dto.request.post.PostCreateRequest;
 import com.nlu.tai_lieu_xanh.dto.response.mdoc.PresignedUrlRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.MajorWithPostsRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostDetailRes;
 import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
-import com.nlu.tai_lieu_xanh.model.PostStatus;
 import com.nlu.tai_lieu_xanh.service.MajorService;
 import com.nlu.tai_lieu_xanh.service.PostService;
 

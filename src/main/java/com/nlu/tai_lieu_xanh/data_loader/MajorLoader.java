@@ -1,12 +1,12 @@
 package com.nlu.tai_lieu_xanh.data_loader;
 
-import com.nlu.tai_lieu_xanh.dto.request.MajorCreateRequest;
-import com.nlu.tai_lieu_xanh.service.MajorService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import com.nlu.tai_lieu_xanh.dto.request.MajorCreateRequest;
+import com.nlu.tai_lieu_xanh.service.MajorService;
 
 @Component
 @Order(1)

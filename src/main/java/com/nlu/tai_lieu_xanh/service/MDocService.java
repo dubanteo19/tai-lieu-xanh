@@ -1,6 +1,5 @@
 package com.nlu.tai_lieu_xanh.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +67,7 @@ public class MDocService {
     String PORT = "9000";
     String prefix = HOST + ":" + PORT + "/previews/doc-" + id + "/page-";
     for (int i = 0; i < previewCount; i++) {
-      String url =prefix + (i + 1) + ".webp";
+      String url = prefix + (i + 1) + ".webp";
       previewUrls.add(url);
     }
     return previewUrls;

@@ -1,11 +1,12 @@
 package com.nlu.tai_lieu_xanh.utils;
 
-import com.nlu.tai_lieu_xanh.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+
+import com.nlu.tai_lieu_xanh.domain.user.Role;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
