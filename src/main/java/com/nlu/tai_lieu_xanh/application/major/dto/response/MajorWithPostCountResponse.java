@@ -1,7 +1,7 @@
 package com.nlu.tai_lieu_xanh.application.major.dto.response;
 
-public record MajorWithPostsRes(
+public record MajorWithPostCountResponse(
     Integer id,
     String majorName,
-    Integer posts) {
+    Long postCount) {
 }

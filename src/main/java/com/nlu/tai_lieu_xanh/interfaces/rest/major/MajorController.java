@@ -1,4 +1,4 @@
-package com.nlu.tai_lieu_xanh.controller;
+package com.nlu.tai_lieu_xanh.interfaces.rest.major;
 
 import java.util.List;
 
@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nlu.tai_lieu_xanh.dto.response.post.MajorRes;
-import com.nlu.tai_lieu_xanh.model.Major;
-import com.nlu.tai_lieu_xanh.service.MajorService;
+import com.nlu.tai_lieu_xanh.application.major.dto.response.MajorResponse;
+import com.nlu.tai_lieu_xanh.application.major.service.MajorService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,16 +17,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/majors")
 public class MajorController {
+
   private final MajorService majorService;
 
   @GetMapping
-  public ResponseEntity<List<MajorRes>> getAllMajors() {
+  public ResponseEntity<List<MajorResponse>> getAllMajors() {
     return ResponseEntity.ok(majorService.findAll());
   }
 
   @GetMapping("/{majorName}")
-  public ResponseEntity<List<Major>> searchMajorsByName(@PathVariable String majorName) {
-    return ResponseEntity.ok(majorService.searchByName(majorName));
+  public ResponseEntity<List<MajorResponse>> searchMajorsByName(@PathVariable String majorName) {
+    return ResponseEntity.ok(majorService.searchMajorsByName(majorName));
   }
 
 }
