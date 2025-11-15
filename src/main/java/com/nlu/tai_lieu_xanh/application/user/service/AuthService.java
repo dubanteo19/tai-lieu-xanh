@@ -1,24 +1,24 @@
 package com.nlu.tai_lieu_xanh.application.user.service;
 
+import com.nlu.tai_lieu_xanh.application.user.dto.request.RequestTokenRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserLoginRequest;
-import com.nlu.tai_lieu_xanh.application.user.dto.request.UserUpdatePasswordReq;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.LoginRes;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterRes;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.UserInfoRes;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.VerifyRes;
-import com.nlu.tai_lieu_xanh.dto.request.RequestTokenReq;
+import com.nlu.tai_lieu_xanh.application.user.dto.request.UserUpdatePasswordRequest;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.LoginResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.VerifyResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.UserInfoResponse;
 
 public interface AuthService {
-  RegisterRes register(UserCreateRequest request);
+  RegisterResponse register(UserCreateRequest request);
 
-  VerifyRes verifyAccount(String token);
+  VerifyResponse verifyAccount(String token);
 
-  LoginRes login(UserLoginRequest request);
+  LoginResponse login(UserLoginRequest request);
 
-  UserInfoRes updatePassword(Integer id, UserUpdatePasswordReq userUpdatePasswordReq);
+  UserInfoResponse updatePassword(Integer id, UserUpdatePasswordRequest userUpdatePasswordRequest);
 
-  LoginRes refreshToken(RequestTokenReq request);
+  LoginResponse refreshToken(RequestTokenRequest request);
 
   void forgotPassword(String email);
 }

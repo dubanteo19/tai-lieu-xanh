@@ -2,21 +2,21 @@ package com.nlu.tai_lieu_xanh.application.comment.service;
 
 import java.util.List;
 
-import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentCreateReq;
+import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentCreateRequest;
 import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentDeleteReq;
-import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentUpdateReq;
-import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentRes;
+import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentUpdateRequest;
+import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentResponse;
 
 public interface CommnetService {
-  List<CommentRes> getAllCommentsByPostId(Integer postId);
+  List<CommentResponse> getAllCommentsByPostId(Integer postId);
 
-  CommentRes saveComment(Integer postId, CommentCreateReq commentCreateReq);
+  CommentResponse saveComment(Integer postId, CommentCreateRequest commentCreateRequest);
 
-  CommentRes updateComment(Integer postId, CommentUpdateReq req);
+  CommentResponse updateComment(Integer postId, CommentUpdateRequest commentUpdateRequest);
 
   void deleteComment(Integer commentId);
 
   void deleteComment(Integer postId, CommentDeleteReq req);
 
-  List<CommentRes> getAllComments();
+  List<CommentResponse> getAllComments();
 }

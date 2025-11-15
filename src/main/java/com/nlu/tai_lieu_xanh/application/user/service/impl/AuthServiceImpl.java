@@ -10,17 +10,12 @@ import org.springframework.stereotype.Service;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserLoginRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserUpdatePasswordReq;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.LoginRes;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterRes;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.UserInfoRes;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.VerifyRes;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterResponse;
 import com.nlu.tai_lieu_xanh.application.user.mapper.UserMapper;
 import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
 import com.nlu.tai_lieu_xanh.domain.user.User;
 import com.nlu.tai_lieu_xanh.domain.user.UserRepository;
 import com.nlu.tai_lieu_xanh.domain.user.UserStatus;
-import com.nlu.tai_lieu_xanh.domain.user.VerificationToken;
-import com.nlu.tai_lieu_xanh.dto.request.RequestTokenReq;
 import com.nlu.tai_lieu_xanh.exception.EmailExistException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.repository.VerificationRepository;
@@ -41,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
   private final MailService mailService;
 
   @Override
-  public RegisterRes register(UserCreateRequest request) {
+  public RegisterResponse register(UserCreateRequest request) {
     var user = userMapper.toUser(request);
     if (userRepository.existsByEmail(user.getEmail())) {
       throw new EmailExistException();
@@ -59,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
      * throw new RuntimeException(e);
      * }
      */
-    return new RegisterRes("Registered successfully", savedUser.getEmail(), savedUser.getId());
+    return new RegisterResponse("Registered successfully", savedUser.getEmail(), savedUser.getId());
   }
 
   private String generateRandomPassword(int length) {
@@ -76,14 +71,16 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public VerifyRes verifyAccount(String token) {
-    /* var verificationToken = verificationRepository.findByToken((token))
-        .orElseThrow(() -> new BadCredentialsException("Invalid token"));
-    var user = verificationToken.getUser();
-    user.setStatus(UserStatus.ACTIVE);
-    userRepository.save(user);
-    verificationRepository.delete(verificationToken); */
-    return new VerifyRes("success");
+  public VerifyResponse verifyAccount(String token) {
+    /*
+     * var verificationToken = verificationRepository.findByToken((token))
+     * .orElseThrow(() -> new BadCredentialsException("Invalid token"));
+     * var user = verificationToken.getUser();
+     * user.setStatus(UserStatus.ACTIVE);
+     * userRepository.save(user);
+     * verificationRepository.delete(verificationToken);
+     */
+    return new VerifyResponse("success");
   }
 
   @Override

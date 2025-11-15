@@ -75,4 +75,8 @@ public class User {
     this.password = password;
   }
 
+  public void activate() {
+    this.status = UserStatus.ACTIVE;
+  }
+
 }

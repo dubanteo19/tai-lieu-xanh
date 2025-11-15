@@ -1,4 +1,4 @@
-package com.nlu.tai_lieu_xanh.dto.request.m.doc;
+package com.nlu.tai_lieu_xanh.application.mdoc.dto.request;
 
 public record PreviewGeneratedEvent(
     Integer mDocId,

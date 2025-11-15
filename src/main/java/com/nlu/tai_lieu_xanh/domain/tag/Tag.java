@@ -16,4 +16,13 @@ public class Tag extends AbstractModel {
 
   protected Tag() {
   }
+
+  protected Tag(String name) {
+    this.name = name;
+  }
+
+  public static Tag create(String name) {
+    return new Tag(name);
+  }
+
 }
