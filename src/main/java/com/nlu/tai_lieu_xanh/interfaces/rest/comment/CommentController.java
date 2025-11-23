@@ -1,10 +1,7 @@
-package com.nlu.tai_lieu_xanh.controller;
-
-import java.util.List;
+package com.nlu.tai_lieu_xanh.interfaces.rest.comment;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentCreateRequest;
-import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentDeleteReq;
 import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentUpdateRequest;
 import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentResponse;
 import com.nlu.tai_lieu_xanh.application.comment.service.CommentService;

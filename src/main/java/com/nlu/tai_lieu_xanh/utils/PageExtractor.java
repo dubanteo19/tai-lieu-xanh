@@ -7,17 +7,21 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class PageExtractor {
 
-  public static int extractPageCount(MultipartFile file) throws Exception {
+  public static int extractPageCount(MultipartFile file) {
     String fileType = file.getContentType();
     if ("application/pdf".equals(fileType)) {
-      return getPdfPageCount(file);
+      try {
+        return getPdfPageCount(file);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     } else {
       throw new IllegalArgumentException("Unsupported file type: " + fileType);
     }
+    return 0;
   }
 
   private static int getPdfPageCount(MultipartFile file) throws Exception {
-
     try (InputStream inputStream = file.getInputStream();) {
       PDDocument document = PDDocument.load(inputStream);
       var pageCount = document.getNumberOfPages();

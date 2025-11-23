@@ -1,4 +1,4 @@
-package com.nlu.tai_lieu_xanh.service;
+package com.nlu.tai_lieu_xanh.infrastructure.storage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

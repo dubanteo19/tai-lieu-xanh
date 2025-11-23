@@ -16,7 +16,6 @@ import lombok.Getter;
 @Getter
 public class MDoc extends AbstractModel {
   private String fileName;
-  private String url;
   @Enumerated(EnumType.STRING)
   private FileType fileType;
   @Column(name = "`pages`")
@@ -27,10 +26,27 @@ public class MDoc extends AbstractModel {
   private Integer downloads = 0;
   private int previewCount = 0;
 
+  protected MDoc() {
+  }
+
+  private MDoc(String fileName, Long fileSize, Integer pages, FileType fileType) {
+    this.fileName = fileName;
+    this.fileSize = fileSize;
+    this.pages = pages;
+    this.fileType = fileType;
+
+  }
+
   public void increaseDownloadCount() {
     this.downloads++;
   }
 
-  protected MDoc() {
+  public void setPreviewCount(int previewCount) {
+    this.previewCount = previewCount;
+
+  }
+
+  public static MDoc create(String fileName, Long fileSize, Integer pages, FileType fileType) {
+    return new MDoc(fileName, fileSize, pages, fileType);
   }
 }
