@@ -1,73 +1,71 @@
 package com.nlu.tai_lieu_xanh.application.comment.service.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentCreateRequest;
-import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentDeleteReq;
+import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentUpdateRequest;
 import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentResponse;
 import com.nlu.tai_lieu_xanh.application.comment.mapper.CommentMapper;
-import com.nlu.tai_lieu_xanh.application.comment.service.CommnetService;
-import com.nlu.tai_lieu_xanh.application.post.service.PostService;
-import com.nlu.tai_lieu_xanh.application.user.service.UserService;
-import com.nlu.tai_lieu_xanh.domain.comment.CommentStatus;
-import com.nlu.tai_lieu_xanh.repository.CommentRepository;
+import com.nlu.tai_lieu_xanh.application.comment.service.CommentService;
+import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
+import com.nlu.tai_lieu_xanh.domain.comment.Comment;
+import com.nlu.tai_lieu_xanh.domain.comment.CommentRepository;
+import com.nlu.tai_lieu_xanh.domain.post.Post;
+import com.nlu.tai_lieu_xanh.domain.user.User;
+import com.nlu.tai_lieu_xanh.exception.CommentNotFoundException;
 
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CommentServiceImp implements CommnetService {
+public class CommentServiceImp implements CommentService {
   private final CommentRepository commentRepository;
-  private final PostService postService;
-  private final UserService userService;
+  private final EntityManager entityManager;
   private final CommentMapper commentMapper;
+  private final AuthService authService;
 
-  public List<CommentResponse> getAllCommentsByPostId(Integer postId) {
-    var post = postService.findById(postId);
-    var comments = post.getComments();
-    return comments.stream().map(commentMapper::toCommentRes).collect(Collectors.toList());
-  }
-
-  public CommentResponse saveComment(Integer postId, CommentCreateRequest commentCreateReq) {
-    if (!postId.equals(commentCreateReq.postId())) {
-      throw new IllegalArgumentException("postId is not match");
-    }
-    var user = userService.findById(commentCreateReq.userId());
-    var post = postService.findById(postId);
-    var comment = new Comment();
-    comment.setContent(commentCreateReq.content());
-    comment.setPost(post);
-    comment.setUser(user);
+  @Override
+  public CommentResponse save(CommentCreateRequest request) {
+    var userRef = entityManager.getReference(User.class, request.userId());
+    var postRef = entityManager.getReference(Post.class, request.postId());
+    var comment = Comment.create(postRef, userRef, request.content());
     return commentMapper.toCommentRes(commentRepository.save(comment));
   }
 
-  public CommentRes updateComment(Integer postId, CommentUpdateReq req) {
-    if (!postId.equals(req.postId())) {
-      throw new IllegalArgumentException("postId is not match");
-    }
-    var user = userService.findById(req.userId());
-    if (!user.getId().equals(req.userId())) {
-      throw new IllegalArgumentException("userId is not match");
-    }
-    var currentComment = commentRepository
-        .findById(req.commentId()).orElseThrow(() -> new IllegalArgumentException("comment not found"));
-    currentComment.setContent(req.content());
-    return commentMapper.toCommentRes(commentRepository.save(currentComment));
+  @Override
+  public List<CommentResponse> getAllByPostId(Integer postId) {
+    var comments = commentRepository.findAllByPostId(postId);
+    return commentMapper.tocommentResponseList(comments);
   }
 
-  public void deleteComment(Integer commentId) {
+  @Override
+  public void delete(Integer commentId) {
     var comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new IllegalArgumentException("comment not found"));
-    comment.setStatus(CommentStatus.DELETED);
+    comment.delete();
     commentRepository.save(comment);
   }
 
-  public List<CommentResponse> getAllComments() {
-    return commentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdDate"))
-        .stream().map(commentMapper::toCommentRes);
+  @Override
+  public List<CommentResponse> getAll() {
+    throw new UnsupportedOperationException("Unimplemented method 'getAll'");
+  }
+
+  @Override
+  @Transactional
+  public CommentResponse update(CommentUpdateRequest request) {
+    var currentUserId = authService.getCurrentUserId();
+    var comment = commentRepository
+        .findById(request.commentId())
+        .orElseThrow(CommentNotFoundException::new);
+    if (!comment.getUser().getId().equals(currentUserId))
+      throw new AccessDeniedException("You have no permission to update this comment");
+    comment.updateContent(request.content());
+    return commentMapper.toCommentRes(comment);
   }
 }

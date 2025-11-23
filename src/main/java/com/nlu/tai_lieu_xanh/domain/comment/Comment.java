@@ -29,4 +29,22 @@ public class Comment extends AbstractModel {
   protected Comment() {
 
   }
+
+  private Comment(Post post, User user, String content) {
+    this.post = post;
+    this.user = user;
+    this.content = content;
+  }
+
+  public void delete() {
+    this.status = CommentStatus.DELETED;
+  }
+
+  public static Comment create(Post post, User user, String content) {
+    return new Comment(post, user, content);
+  }
+
+  public void updateContent(String newContent) {
+    this.content = newContent;
+  }
 }

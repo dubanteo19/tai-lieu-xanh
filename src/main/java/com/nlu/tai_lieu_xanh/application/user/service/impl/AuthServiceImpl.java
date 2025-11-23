@@ -3,14 +3,20 @@ package com.nlu.tai_lieu_xanh.application.user.service.impl;
 import java.util.Random;
 import java.util.UUID;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.nlu.tai_lieu_xanh.application.user.dto.request.RequestTokenRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserLoginRequest;
-import com.nlu.tai_lieu_xanh.application.user.dto.request.UserUpdatePasswordReq;
+import com.nlu.tai_lieu_xanh.application.user.dto.request.UserUpdatePasswordRequest;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.LoginResponse;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.UserInfoResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.VerifyResponse;
 import com.nlu.tai_lieu_xanh.application.user.mapper.UserMapper;
 import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
 import com.nlu.tai_lieu_xanh.domain.user.User;
@@ -19,7 +25,7 @@ import com.nlu.tai_lieu_xanh.domain.user.UserStatus;
 import com.nlu.tai_lieu_xanh.exception.EmailExistException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.repository.VerificationRepository;
-import com.nlu.tai_lieu_xanh.service.MailService;
+import com.nlu.tai_lieu_xanh.security.CustomUserDetails;
 import com.nlu.tai_lieu_xanh.utils.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -29,11 +35,9 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImpl implements AuthService {
 
   private final UserRepository userRepository;
-  private final VerificationRepository verificationRepository;
   private final JwtUtil jwtUtil;
   private final UserMapper userMapper;
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
-  private final MailService mailService;
 
   @Override
   public RegisterResponse register(UserCreateRequest request) {
@@ -68,19 +72,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     return password.toString();
-  }
-
-  @Override
-  public VerifyResponse verifyAccount(String token) {
-    /*
-     * var verificationToken = verificationRepository.findByToken((token))
-     * .orElseThrow(() -> new BadCredentialsException("Invalid token"));
-     * var user = verificationToken.getUser();
-     * user.setStatus(UserStatus.ACTIVE);
-     * userRepository.save(user);
-     * verificationRepository.delete(verificationToken);
-     */
-    return new VerifyResponse("success");
   }
 
   @Override
@@ -146,11 +137,31 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public void forgotPassword(String email) {
-    var user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-    String newPassword = generateRandomPassword(8);
-    user.setPassword(newPassword);
-    userRepository.save(user);
+  public UserInfoResponse updatePassword(Integer id, UserUpdatePasswordRequest userUpdatePasswordRequest) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'updatePassword'");
+  }
+
+  @Override
+  public LoginResponse refreshToken(RequestTokenRequest request) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'refreshToken'");
+  }
+
+  @Override
+  public Integer getCurrentUserId() {
+    var auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth == null || !auth.isAuthenticated()) {
+      throw new AccessDeniedException("User not authenticated");
+    }
+    var userDetails = (CustomUserDetails) auth.getPrincipal();
+    return userDetails.getUser().getId();
+  }
+
+  @Override
+  public VerifyResponse verifyAccount(String token) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'verifyAccount'");
   }
 
 }

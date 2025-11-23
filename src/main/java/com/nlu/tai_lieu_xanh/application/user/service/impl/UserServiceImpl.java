@@ -1,9 +1,5 @@
 package com.nlu.tai_lieu_xanh.application.user.service.impl;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,19 +8,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.nlu.tai_lieu_xanh.application.post.mapper.PostMapper;
 import com.nlu.tai_lieu_xanh.application.post.service.PostService;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.UserInfoResponse;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.UserRes;
 import com.nlu.tai_lieu_xanh.application.user.mapper.UserMapper;
 import com.nlu.tai_lieu_xanh.application.user.service.UserService;
-import com.nlu.tai_lieu_xanh.domain.post.Post;
-import com.nlu.tai_lieu_xanh.domain.post.PostStatus;
 import com.nlu.tai_lieu_xanh.domain.user.User;
 import com.nlu.tai_lieu_xanh.domain.user.UserRepository;
-import com.nlu.tai_lieu_xanh.domain.user.UserStatus;
-import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
+import com.nlu.tai_lieu_xanh.infrastructure.mail.MailService;
 import com.nlu.tai_lieu_xanh.repository.PostRepository;
 import com.nlu.tai_lieu_xanh.repository.VerificationRepository;
-import com.nlu.tai_lieu_xanh.service.MailService;
 import com.nlu.tai_lieu_xanh.utils.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -40,7 +31,6 @@ public class UserServiceImpl implements UserService {
   private PostMapper postMapper;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private MailService mailService;
-  private private final PostRepository postRepository;
 
   public User findById(Integer userId) {
     return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);

@@ -1,5 +1,7 @@
 package com.nlu.tai_lieu_xanh.application.comment.mapper;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentResponse;
@@ -12,6 +14,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentMapper {
   private final SharedMapper sharedMapper;
+
+  public List<CommentResponse> tocommentResponseList(List<Comment> comments) {
+    return comments
+        .stream()
+        .map(this::toCommentRes)
+        .toList();
+  }
 
   public CommentResponse toCommentRes(Comment comment) {
     if (comment == null)

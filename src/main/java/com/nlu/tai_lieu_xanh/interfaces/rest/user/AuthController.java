@@ -1,5 +1,6 @@
 package com.nlu.tai_lieu_xanh.controller;
 
+import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterResponse;
 import com.nlu.tai_lieu_xanh.dto.request.RequestTokenReq;
 import com.nlu.tai_lieu_xanh.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.dto.request.UserLoginRequest;
@@ -15,13 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/auth")
 @RestController
-@AllArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class AuthController {
-  UserService userService;
+  private final UserService userService;
 
   @PostMapping("/register")
-  public ResponseEntity<RegisterRes> register(@RequestBody UserCreateRequest request) {
+  public ResponseEntity<RegisterResponse> register(@RequestBody UserCreateRequest request) {
     return ResponseEntity.ok(userService.register(request));
   }
 

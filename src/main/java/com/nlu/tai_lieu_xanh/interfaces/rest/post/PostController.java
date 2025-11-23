@@ -1,4 +1,4 @@
-package com.nlu.tai_lieu_xanh.controller;
+package com.nlu.tai_lieu_xanh.interfaces.rest.post;
 
 import java.util.List;
 
@@ -18,14 +18,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentResponse;
+import com.nlu.tai_lieu_xanh.application.comment.service.CommentService;
+import com.nlu.tai_lieu_xanh.application.major.service.MajorService;
+import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
+import com.nlu.tai_lieu_xanh.application.post.dto.request.PostCreateRequest;
+import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
+import com.nlu.tai_lieu_xanh.application.post.service.PostService;
 import com.nlu.tai_lieu_xanh.domain.post.PostStatus;
-import com.nlu.tai_lieu_xanh.dto.request.post.PostCreateRequest;
-import com.nlu.tai_lieu_xanh.dto.response.mdoc.PresignedUrlRes;
-import com.nlu.tai_lieu_xanh.dto.response.post.MajorWithPostsRes;
-import com.nlu.tai_lieu_xanh.dto.response.post.PostDetailRes;
-import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
-import com.nlu.tai_lieu_xanh.service.MajorService;
-import com.nlu.tai_lieu_xanh.service.PostService;
+import com.nlu.tai_lieu_xanh.domain.user.dto.response.post.MajorWithPostsRes;
+import com.nlu.tai_lieu_xanh.domain.user.dto.response.post.PostDetailRes;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,11 +35,10 @@ import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequestMapping("/posts")
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@AllArgsConstructor
 public class PostController {
-  PostService postService;
-  MajorService majorService;
+  private final PostService postService;
+  private final MajorService majorService;
+  private final CommentService commentService;
 
   @GetMapping()
   public ResponseEntity<List<PostResponse>> getAllPosts(
@@ -179,5 +180,10 @@ public class PostController {
     PostCreateRequest postRequest = new PostCreateRequest(title, description, authorId, majorId, tagList);
 
     return ResponseEntity.ok(postService.save(postRequest, file));
+  }
+
+  @GetMapping("/{id}/comments")
+  public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Integer postId) {
+    return ResponseEntity.ok(commentService.getAllByPostId(postId));
   }
 }

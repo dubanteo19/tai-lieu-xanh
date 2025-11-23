@@ -21,4 +21,6 @@ public interface AuthService {
   LoginResponse refreshToken(RequestTokenRequest request);
 
   void forgotPassword(String email);
+
+  Integer getCurrentUserId();
 }
