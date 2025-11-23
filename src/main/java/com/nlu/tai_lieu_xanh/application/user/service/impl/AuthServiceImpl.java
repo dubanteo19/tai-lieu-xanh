@@ -9,22 +9,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.nlu.tai_lieu_xanh.application.user.dto.request.RequestTokenRequest;
+import com.nlu.tai_lieu_xanh.application.user.dto.request.RefreshTokenRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserLoginRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserUpdatePasswordRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.LoginResponse;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterResponse;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.UserInfoResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.UserSummary;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.VerifyResponse;
 import com.nlu.tai_lieu_xanh.application.user.mapper.UserMapper;
 import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
-import com.nlu.tai_lieu_xanh.domain.user.User;
 import com.nlu.tai_lieu_xanh.domain.user.UserRepository;
 import com.nlu.tai_lieu_xanh.domain.user.UserStatus;
 import com.nlu.tai_lieu_xanh.exception.EmailExistException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
-import com.nlu.tai_lieu_xanh.repository.VerificationRepository;
 import com.nlu.tai_lieu_xanh.security.CustomUserDetails;
 import com.nlu.tai_lieu_xanh.utils.JwtUtil;
 
@@ -75,37 +73,27 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public LoginRes login(UserLoginRequest request) {
-    var user = userRepository.findByEmail(request.email()).orElseThrow(UserNotFoundException::new);
+  public LoginResponse login(UserLoginRequest request) {
+    var user = userRepository
+        .findByEmail(request.email())
+        .orElseThrow(UserNotFoundException::new);
     if (user != null && !bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
       throw new BadCredentialsException("Bad credentials");
     }
     if (user.getStatus() == UserStatus.INACTIVE) {
-      return new LoginRes("inactive", "", "", "", "", user.getId(), user.getEmail(), "");
+      throw new AccessDeniedException("Account inactive");
     }
     if (user.getStatus() == UserStatus.BAN) {
-      return new LoginRes("ban", "", "", "", "", user.getId(), user.getEmail(), "");
+      throw new AccessDeniedException("Account ban");
     }
     String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
     String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
-    return new LoginRes("active", user.getFullName(), user.getBio(), token,
-        refreshToken, user.getId(), user.getEmail(), user.getAvatar());
+    var userSummary = new UserSummary(user.getId(), user.getEmail(), user.getFullName(), user.getAvatar());
+    return new LoginResponse(token, refreshToken, userSummary);
   }
 
   @Override
-  public UserInfoRes updatePassword(Integer id, UserUpdatePasswordReq userUpdatePasswordReq) {
-    var user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-    if (!bCryptPasswordEncoder.matches(userUpdatePasswordReq.password(), user.getPassword())) {
-      throw new BadCredentialsException("Bad credentials");
-    }
-    user.setPassword(bCryptPasswordEncoder.encode(userUpdatePasswordReq.newPassword()));
-    userRepository.save(user);
-    return new UserInfoRes(user.getFullName(), user.getBio(), user.getEmail(),
-        user.getAvatar(), user.getFriends().size(), user.getPosts().size());
-  }
-
-  @Override
-  public LoginRes refreshToken(RequestTokenReq request) {
+  public LoginResponse refreshToken(RefreshTokenRequest request) {
     // Validate the refresh token
     if (!jwtUtil.validateToken(request.refreshToken())) {
       throw new IllegalArgumentException("Invalid or expired refresh token");
@@ -113,39 +101,17 @@ public class AuthServiceImpl implements AuthService {
     // Extract the user's email from the refresh token
     String email = jwtUtil.getUsername(request.refreshToken());
     // Retrieve the user by email
-    User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    var user = userRepository
+        .findByEmail(email)
+        .orElseThrow(UserNotFoundException::new);
     if (user == null) {
       throw new IllegalArgumentException("User not found");
     }
-
     // Generate new tokens
     String newAccessToken = jwtUtil.generateToken(user.getEmail(), user.getRole());
     String newRefreshToken = jwtUtil.generateRefreshToken(user.getEmail());
-
-    // Return the response
-    LoginRes response = new LoginRes(
-        "active",
-        user.getFullName(),
-        user.getBio(),
-        newAccessToken,
-        newRefreshToken,
-        user.getId(),
-        user.getEmail(),
-        user.getAvatar());
-
-    return response;
-  }
-
-  @Override
-  public UserInfoResponse updatePassword(Integer id, UserUpdatePasswordRequest userUpdatePasswordRequest) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'updatePassword'");
-  }
-
-  @Override
-  public LoginResponse refreshToken(RequestTokenRequest request) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'refreshToken'");
+    var userSummary = new UserSummary(user.getId(), user.getEmail(), user.getFullName(), user.getAvatar());
+    return new LoginResponse(newAccessToken, newRefreshToken, userSummary);
   }
 
   @Override
@@ -162,6 +128,23 @@ public class AuthServiceImpl implements AuthService {
   public VerifyResponse verifyAccount(String token) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'verifyAccount'");
+  }
+
+  @Override
+  public void forgotPassword(String email) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'forgotPassword'");
+  }
+
+  @Override
+  public void updatePassword(UserUpdatePasswordRequest request) {
+    Integer currentUserId = getCurrentUserId();
+    var user = userRepository.findById(currentUserId).orElseThrow(UserNotFoundException::new);
+    if (!bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
+      throw new BadCredentialsException("Bad credentials");
+    }
+    String encodedPassword = bCryptPasswordEncoder.encode(request.newPassword());
+    user.updatePassword(encodedPassword);
   }
 
 }

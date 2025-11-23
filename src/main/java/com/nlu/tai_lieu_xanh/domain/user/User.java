@@ -3,6 +3,8 @@ package com.nlu.tai_lieu_xanh.domain.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.PasswordView;
+
 import com.nlu.tai_lieu_xanh.domain.comment.Comment;
 import com.nlu.tai_lieu_xanh.domain.post.Post;
 
@@ -77,6 +79,10 @@ public class User {
 
   public void activate() {
     this.status = UserStatus.ACTIVE;
+  }
+
+  public void updatePassword(String password) {
+    this.password = password;
   }
 
 }
