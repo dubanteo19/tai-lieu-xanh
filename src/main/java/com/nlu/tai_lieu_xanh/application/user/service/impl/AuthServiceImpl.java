@@ -110,12 +110,16 @@ public class AuthServiceImpl implements AuthService {
     // Generate new tokens
     String newAccessToken = jwtUtil.generateToken(user.getEmail(), user.getRole());
     String newRefreshToken = jwtUtil.generateRefreshToken(user.getEmail());
-    var userSummary = new UserSummary(user.getId(), user.getEmail(), user.getFullName(), user.getAvatar());
+    var userSummary = new UserSummary(
+        user.getId(),
+        user.getEmail(),
+        user.getFullName(),
+        user.getAvatar());
     return new LoginResponse(newAccessToken, newRefreshToken, userSummary);
   }
 
   @Override
-  public Integer getCurrentUserId() {
+  public Long getCurrentUserId() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth == null || !auth.isAuthenticated()) {
       throw new AccessDeniedException("User not authenticated");
@@ -138,7 +142,7 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public void updatePassword(UserUpdatePasswordRequest request) {
-    Integer currentUserId = getCurrentUserId();
+    Long currentUserId = getCurrentUserId();
     var user = userRepository.findById(currentUserId).orElseThrow(UserNotFoundException::new);
     if (!bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
       throw new BadCredentialsException("Bad credentials");

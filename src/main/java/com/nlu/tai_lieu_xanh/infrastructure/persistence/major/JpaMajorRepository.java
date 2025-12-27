@@ -26,7 +26,7 @@ public class JpaMajorRepository implements MajorRepository {
   }
 
   @Override
-  public Optional<Major> findById(Integer id) {
+  public Optional<Major> findById(Long id) {
     return springDataMajorRepository.findById(id);
   }
 

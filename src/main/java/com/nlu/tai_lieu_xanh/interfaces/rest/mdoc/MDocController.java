@@ -1,4 +1,4 @@
-package com.nlu.tai_lieu_xanh.controller;
+package com.nlu.tai_lieu_xanh.interfaces.rest.mdoc;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nlu.tai_lieu_xanh.service.MDocService;
+import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
 
 import lombok.RequiredArgsConstructor;
 

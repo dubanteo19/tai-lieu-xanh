@@ -1,4 +1,4 @@
-package com.nlu.tai_lieu_xanh.controller;
+package com.nlu.tai_lieu_xanh.interfaces.rest.user;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nlu.tai_lieu_xanh.application.user.dto.request.RefreshTokenRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserLoginRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.LoginResponse;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterResponse;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.VerifyResponse;
 import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
-import com.nlu.tai_lieu_xanh.application.user.service.UserService;
-import com.nlu.tai_lieu_xanh.domain.user.dto.request.RequestTokenReq;
-import com.nlu.tai_lieu_xanh.dto.response.auth.LoginRes;
-import com.nlu.tai_lieu_xanh.dto.response.auth.VerifyRes;
+
+import lombok.RequiredArgsConstructor;
 
 @RequestMapping("/auth")
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
   private final AuthService authService;
 
@@ -41,7 +41,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<LoginRes> login(@RequestBody UserLoginRequest request) {
-    return ResponseEntity.ok(userService.login(request));
+  public ResponseEntity<LoginResponse> login(@RequestBody UserLoginRequest request) {
+    return ResponseEntity.ok(authService.login(request));
   }
 }

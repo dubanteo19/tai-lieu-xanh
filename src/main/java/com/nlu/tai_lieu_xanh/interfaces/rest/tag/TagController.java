@@ -1,4 +1,4 @@
-package com.nlu.tai_lieu_xanh.controller;
+package com.nlu.tai_lieu_xanh.interfaces.rest.tag;
 
 import java.util.List;
 
@@ -7,22 +7,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nlu.tai_lieu_xanh.dto.response.post.TagRes;
-import com.nlu.tai_lieu_xanh.service.TagService;
+import com.nlu.tai_lieu_xanh.application.tag.dto.response.TagResponse;
+import com.nlu.tai_lieu_xanh.application.tag.service.TagService;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/tags")
-@AllArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class TagController {
-  TagService tagService;
+  private final TagService tagService;
 
   @GetMapping
-  public ResponseEntity<List<TagRes>> getAllTags() {
+  public ResponseEntity<List<TagResponse>> getAllTags() {
     return ResponseEntity.ok(tagService.findAll());
   }
 }

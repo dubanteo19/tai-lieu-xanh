@@ -3,8 +3,6 @@ package com.nlu.tai_lieu_xanh.domain.user;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.PasswordView;
-
 import com.nlu.tai_lieu_xanh.domain.comment.Comment;
 import com.nlu.tai_lieu_xanh.domain.post.Post;
 
@@ -29,7 +27,7 @@ import lombok.Getter;
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private Long id;
   private String email;
   private String password;
   private String fullName;

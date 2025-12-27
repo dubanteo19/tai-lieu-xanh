@@ -19,17 +19,17 @@ public class MDoc extends AbstractModel {
   @Enumerated(EnumType.STRING)
   private FileType fileType;
   @Column(name = "`pages`")
-  private Integer pages;
+  private int pages;
   private Long fileSize;
   @ColumnDefault("0")
   @Column(nullable = false)
-  private Integer downloads = 0;
+  private int downloads = 0;
   private int previewCount = 0;
 
   protected MDoc() {
   }
 
-  private MDoc(String fileName, Long fileSize, Integer pages, FileType fileType) {
+  private MDoc(String fileName, Long fileSize, int pages, FileType fileType) {
     this.fileName = fileName;
     this.fileSize = fileSize;
     this.pages = pages;
@@ -46,7 +46,7 @@ public class MDoc extends AbstractModel {
 
   }
 
-  public static MDoc create(String fileName, Long fileSize, Integer pages, FileType fileType) {
+  public static MDoc create(String fileName, Long fileSize, int pages, FileType fileType) {
     return new MDoc(fileName, fileSize, pages, fileType);
   }
 }

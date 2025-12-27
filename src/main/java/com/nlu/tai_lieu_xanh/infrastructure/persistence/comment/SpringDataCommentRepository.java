@@ -8,13 +8,13 @@ import org.springframework.data.repository.query.Param;
 
 import com.nlu.tai_lieu_xanh.domain.comment.Comment;
 
-public interface SpringDataCommentRepository extends JpaRepository<Comment, Integer> {
+public interface SpringDataCommentRepository extends JpaRepository<Comment, Long> {
 
   @Query("""
       SELECT c FROM Comment c
       WHERE c.post.id = :postId
       ORDER BY c.createdDate ASC
         """)
-  List<Comment> findAllByPostId(@Param("postId") Integer postId);
+  List<Comment> findAllByPostId(@Param("postId") Long postId);
 
 }

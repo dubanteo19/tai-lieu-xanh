@@ -4,13 +4,16 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
-import com.nlu.tai_lieu_xanh.dto.response.post.PostResponse;
+import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
 
-/**
- * AdminPostService
- */
 public interface AdminPostService {
-  List<PostResponse> findAllDeletedPost(Pageable pageable);
+  List<PostResponse> getAllDeletedPost(Pageable pageable);
+
+  List<PostResponse> getAllPost(Pageable pageable);
 
   void delete(Integer id);
+
+  void rejectPost(Integer id, String reason);
+
+  List<PostResponse> getAllReviewPost(Pageable pageable);
 }

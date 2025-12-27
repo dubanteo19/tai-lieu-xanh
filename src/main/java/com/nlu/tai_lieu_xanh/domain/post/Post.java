@@ -6,17 +6,19 @@ import java.util.List;
 import com.nlu.tai_lieu_xanh.domain.comment.Comment;
 import com.nlu.tai_lieu_xanh.domain.major.Major;
 import com.nlu.tai_lieu_xanh.domain.mdoc.MDoc;
+import com.nlu.tai_lieu_xanh.domain.tag.Tag;
 import com.nlu.tai_lieu_xanh.domain.user.User;
 import com.nlu.tai_lieu_xanh.infrastructure.persistence.AbstractModel;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -44,26 +46,23 @@ public class Post extends AbstractModel {
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
   List<Comment> comments = new ArrayList<>();
 
-  @ElementCollection
-  @Column(name = "tag_id")
-  List<Integer> tagIds = new ArrayList<>();
+  @ManyToMany
+  @JoinTable(
+    name = "post_tags",
+    joinColumns = @JoinColumn(name = "post_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  List<Tag> tags = new ArrayList<>();
+
   @Enumerated(EnumType.STRING)
-  PostStatus postStatus = PostStatus.REVIEWING;
+  PostStatus postStatus = PostStatus.PUBLISHED;
   int views = 0;
   int likes = 0;
 
   protected Post() {
   }
 
-  public createPost(){
-    return new Post(); 
+  public Post createPost() {
+    return new Post();
   }
 
-  public void addTag(Integer tagId) {
-    this.tagIds.add(tagId);
-  }
-
-  public void removeTag(Integer tagId) {
-    this.tagIds.remove(tagId);
-  }
 }

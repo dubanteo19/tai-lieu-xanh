@@ -19,7 +19,7 @@ public class AdminMajorServiceImpl implements AdminMajorService {
   private final MajorMapper majorMapper;
 
   @Override
-  public MajorResponse update(Integer majorId, MajorUpdateRequest request) {
+  public MajorResponse update(Long majorId, MajorUpdateRequest request) {
     var major = majorRepository
         .findById(majorId)
         .orElseThrow(MajorNotFoundException::new);
@@ -35,7 +35,7 @@ public class AdminMajorServiceImpl implements AdminMajorService {
   }
 
   @Override
-  public void delete(Integer majorId) {
+  public void delete(Long majorId) {
     var currentMajor = majorRepository
         .findById(majorId)
         .orElseThrow(MajorNotFoundException::new);

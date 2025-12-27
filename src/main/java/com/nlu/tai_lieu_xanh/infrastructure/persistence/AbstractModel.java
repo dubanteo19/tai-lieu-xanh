@@ -19,7 +19,7 @@ import lombok.Getter;
 public abstract class AbstractModel {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Integer id;
+  Long id;
   @CreatedDate
   private LocalDateTime createdDate;
   @LastModifiedDate

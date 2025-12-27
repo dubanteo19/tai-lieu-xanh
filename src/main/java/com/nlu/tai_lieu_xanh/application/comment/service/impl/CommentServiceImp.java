@@ -31,20 +31,21 @@ public class CommentServiceImp implements CommentService {
 
   @Override
   public CommentResponse save(CommentCreateRequest request) {
-    var userRef = entityManager.getReference(User.class, request.userId());
+    Long currentUserId = authService.getCurrentUserId();
+    var userRef = entityManager.getReference(User.class, currentUserId);
     var postRef = entityManager.getReference(Post.class, request.postId());
     var comment = Comment.create(postRef, userRef, request.content());
     return commentMapper.toCommentRes(commentRepository.save(comment));
   }
 
   @Override
-  public List<CommentResponse> getAllByPostId(Integer postId) {
+  public List<CommentResponse> getAllByPostId(Long postId) {
     var comments = commentRepository.findAllByPostId(postId);
     return commentMapper.tocommentResponseList(comments);
   }
 
   @Override
-  public void delete(Integer commentId) {
+  public void delete(Long commentId) {
     var comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new IllegalArgumentException("comment not found"));
     comment.delete();

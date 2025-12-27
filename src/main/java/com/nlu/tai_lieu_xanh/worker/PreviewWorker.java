@@ -8,9 +8,9 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.nlu.tai_lieu_xanh.config.RabbitMQConfig;
-import com.nlu.tai_lieu_xanh.dto.request.m.doc.PreviewEvent;
-import com.nlu.tai_lieu_xanh.dto.request.m.doc.PreviewGeneratedEvent;
-import com.nlu.tai_lieu_xanh.service.MinioStorageService;
+import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewEvent;
+import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewGeneratedEvent;
+import com.nlu.tai_lieu_xanh.infrastructure.storage.MinioStorageService;
 import com.nlu.tai_lieu_xanh.utils.ImageConverter;
 import com.nlu.tai_lieu_xanh.utils.PdfPreviewGenerator;
 

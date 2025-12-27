@@ -1,7 +1,7 @@
 package com.nlu.tai_lieu_xanh.infrastructure.persistence.major;
 
 public interface MajorWithPostCountProjection {
-  Integer getId();
+  Long getId();
 
   String getMajorName();
 

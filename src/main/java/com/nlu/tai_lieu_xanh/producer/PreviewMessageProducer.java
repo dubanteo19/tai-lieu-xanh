@@ -4,7 +4,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import com.nlu.tai_lieu_xanh.config.RabbitMQConfig;
-import com.nlu.tai_lieu_xanh.dto.request.m.doc.PreviewEvent;
+import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewEvent;
 
 import lombok.RequiredArgsConstructor;
 

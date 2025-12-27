@@ -1,11 +1,9 @@
-package com.nlu.tai_lieu_xanh.dto.response.post;
+package com.nlu.tai_lieu_xanh.domain.post;
 
 import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.nlu.tai_lieu_xanh.domain.post.Post;
-import com.nlu.tai_lieu_xanh.domain.post.PostStatus;
 import com.nlu.tai_lieu_xanh.domain.tag.Tag;
 
 import jakarta.persistence.criteria.Join;

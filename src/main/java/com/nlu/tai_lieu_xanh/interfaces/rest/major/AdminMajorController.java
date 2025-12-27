@@ -32,13 +32,13 @@ public class AdminMajorController {
   }
 
   @DeleteMapping("/{majorId}")
-  public ResponseEntity<Void> deleteMajor(@PathVariable Integer majorId) {
+  public ResponseEntity<Void> deleteMajor(@PathVariable Long majorId) {
     majorService.delete(majorId);
     return ResponseEntity.noContent().build();
   }
 
   @PutMapping("/{majorId}")
-  public ResponseEntity<MajorResponse> updateMajor(@PathVariable Integer majorId,
+  public ResponseEntity<MajorResponse> updateMajor(@PathVariable Long majorId,
       @RequestBody MajorUpdateRequest request) {
     return ResponseEntity.ok(majorService.update(majorId, request));
   }

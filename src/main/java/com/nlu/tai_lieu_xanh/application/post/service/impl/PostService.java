@@ -11,26 +11,25 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.nlu.tai_lieu_xanh.application.mdoc.dto.request.PreviewEvent;
+import com.nlu.tai_lieu_xanh.application.major.service.MajorService;
 import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
+import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
+import com.nlu.tai_lieu_xanh.application.notification.service.NotificationService;
 import com.nlu.tai_lieu_xanh.application.post.dto.request.PostCreateRequest;
+import com.nlu.tai_lieu_xanh.application.post.dto.response.PostDetailResponse;
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
 import com.nlu.tai_lieu_xanh.application.post.mapper.PostMapper;
 import com.nlu.tai_lieu_xanh.application.post.service.PostService;
 import com.nlu.tai_lieu_xanh.application.tag.service.TagService;
-import com.nlu.tai_lieu_xanh.domain.mdoc.MDoc;
 import com.nlu.tai_lieu_xanh.domain.post.Post;
+import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
+import com.nlu.tai_lieu_xanh.domain.post.PostSpecification;
 import com.nlu.tai_lieu_xanh.domain.post.PostStatus;
 import com.nlu.tai_lieu_xanh.domain.user.UserRepository;
-import com.nlu.tai_lieu_xanh.domain.user.dto.response.post.PostDetailRes;
-import com.nlu.tai_lieu_xanh.exception.PostNotFoundException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
+import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewEvent;
+import com.nlu.tai_lieu_xanh.infrastructure.storage.MinioStorageService;
 import com.nlu.tai_lieu_xanh.producer.PreviewMessageProducer;
-import com.nlu.tai_lieu_xanh.repository.PostRepository;
-import com.nlu.tai_lieu_xanh.service.MDocService;
-import com.nlu.tai_lieu_xanh.service.MajorService;
-import com.nlu.tai_lieu_xanh.service.MinioStorageService;
-import com.nlu.tai_lieu_xanh.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,22 +46,6 @@ public class PostServiceImpl implements PostService {
   private final MinioStorageService minioStorageService;
   private final PreviewMessageProducer previewMessageProducer;
 
-  public List<PostResponse> findAllDeletedPost(Pageable pageable) {
-    var spec = PostSpecification.isDeleted();
-    return postRepository.findAll(spec, pageable)
-        .stream()
-        .map(postMapper::toPostResponse)
-        .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<PostResponse> findAllPost(Pageable pageable) {
-    return postRepository.findAll(pageable)
-        .stream()
-        .map(postMapper::toPostResponse)
-        .collect(Collectors.toList());
-  }
-
   public List<PostResponse> findPublishedPosts(Pageable pageable) {
     var spec = PostSpecification.isPublished();
     return postRepository.findAll(spec, pageable)
@@ -71,11 +54,7 @@ public class PostServiceImpl implements PostService {
         .collect(Collectors.toList());
   }
 
-  public Post findById(Integer id) {
-    return postRepository.findById(id).orElseThrow(() -> new PostNotFoundException("Post not found"));
-  }
-
-  public PostDetailRes save(PostCreateRequest postRequest, MultipartFile file) {
+  public PostResponse create(PostCreateRequest postRequest, MultipartFile file) {
     var post = postMapper.toPost(postRequest);
     var author = userRepository.findById(postRequest.authorId()).orElseThrow(UserNotFoundException::new);
     var major = majorService.findById(postRequest.majorId());
@@ -94,27 +73,11 @@ public class PostServiceImpl implements PostService {
     return postMapper.toPostDetailRes(savedPost);
   }
 
-  public MDoc findDocumentById(Integer postId) {
-    var post = postRepository.findById(postId)
-        .orElseThrow(() -> new PostNotFoundException("Post id %d not found".formatted(postId)));
-    return post.getDoc();
-  }
-
-  public PostDetailRes findPostDetailById(Integer id) {
-    var post = findById(id);
-    return postMapper.toPostDetailRes(post);
-  }
-
   public List<PostResponse> findNewPosts() {
     var pageable = PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "createdDate"));
     var spec = PostSpecification.isPublished();
     return postRepository.findAll(spec, pageable)
         .map(postMapper::toPostResponse).toList();
-  }
-
-  public void delete(Integer id) {
-    var post = findById(id);
-    postRepository.delete(post);
   }
 
   public List<PostResponse> findHotPosts() {
@@ -124,13 +87,7 @@ public class PostServiceImpl implements PostService {
         .map(postMapper::toPostResponse).toList();
   }
 
-  public void viewPost(Integer id) {
-    var post = findById(id);
-    post.setViews(post.getViews() + 1);
-    postRepository.save(post);
-  }
-
-  public List<PostResponse> findRelatedPosts(Integer postId) {
+  public List<PostResponse> findRelatedPosts(Long postId) {
     var pageable = PageRequest.of(0, 4, Sort.by(Sort.Direction.DESC, "createdDate"));
     var post = findById(postId);
     var majorId = post.getMajor().getId();
@@ -144,7 +101,13 @@ public class PostServiceImpl implements PostService {
         .collect(Collectors.toList());
   }
 
-  public List<PostResponse> searchPosts(String fileType, Integer majorId, List<String> tags,
+  public void viewPost(Long id) {
+    var post = findById(id);
+    post.setViews(post.getViews() + 1);
+    postRepository.save(post);
+  }
+
+  public List<PostResponse> searchPosts(String fileType, Long majorId, List<String> tags,
       String keyword, String sortBy, String direction, int page, int size) {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Specification<Post> spec = Specification.where(null);
@@ -168,45 +131,33 @@ public class PostServiceImpl implements PostService {
 
   }
 
-  public PresignedUrlRes download(Integer id) {
-    var post = findById(id);
-    var doc = post.getDoc();
-    doc.increaseDownloadCount();
-    post.setDoc(doc);
-    postRepository.save(post);
-    String url = minioStorageService.getFileUrl(doc.getFileName());
-    return new PresignedUrlRes(url);
-  };
-
-  public List<PostResponse> getPostByIdList(String idList) {
-    var postIdList = Arrays.stream(idList.split("-"))
-        .map(Integer::parseInt)
-        .toList();
-
-    return postRepository.findAllById(postIdList)
-        .stream()
-        .filter(post -> post.getPostStatus() == PostStatus.PUBLISHED)
-        .map(postMapper::toPostResponse).toList();
+  @Override
+  public PostDetailResponse getPostDetail(Long postId) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getPostDetail'");
   }
 
-  public void setPostStatus(Integer id, PostStatus postStatus) {
-    var post = findById(id);
-    post.setPostStatus(postStatus);
-    postRepository.save(post);
+  @Override
+  public List<PostResponse> getNewPosts() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getNewPosts'");
   }
 
-  public List<PostResponse> findAllReviewPost(Pageable pageable) {
-    var spec = PostSpecification.isReview();
-    return postRepository.findAll(spec, pageable)
-        .stream()
-        .map(postMapper::toPostResponse)
-        .collect(Collectors.toList());
+  @Override
+  public List<PostResponse> getHotPosts() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getHotPosts'");
   }
 
-  public void rejectPost(Integer id, PostStatus postStatus, String reason) {
-    var post = findById(id);
-    var userId = post.getAuthor().getId();
-    post.setPostStatus(postStatus);
-    notificationService.createNotification(userId, "Tài liệu của bạn đã bị từ chối vì lý do %s".formatted(reason));
+  @Override
+  public List<PostResponse> getRelatedPosts(Long postId) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getRelatedPosts'");
+  }
+
+  @Override
+  public List<PostResponse> getPostsByIds(String Ids) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getPostsByIds'");
   }
 }

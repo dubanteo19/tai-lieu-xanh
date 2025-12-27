@@ -7,13 +7,13 @@ import com.nlu.tai_lieu_xanh.application.comment.dto.request.CommentUpdateReques
 import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentResponse;
 
 public interface CommentService {
-  List<CommentResponse> getAllByPostId(Integer postId);
+  List<CommentResponse> getAllByPostId(Long postId);
 
   CommentResponse save(CommentCreateRequest commentCreateRequest);
 
   CommentResponse update(CommentUpdateRequest commentUpdateRequest);
 
-  void delete(Integer commentId);
+  void delete(Long commentId);
 
   List<CommentResponse> getAll();
 }

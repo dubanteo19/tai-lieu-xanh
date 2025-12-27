@@ -7,6 +7,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
 import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
 import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
 import com.nlu.tai_lieu_xanh.config.RabbitMQConfig;
@@ -34,19 +35,19 @@ public class MDocServiceImpl implements MDocService {
   @RabbitListener(queues = RabbitMQConfig.PREVIEW_GENERATED_QUEUE)
   public void handlePreivewGeneratedEvent(PreviewGeneratedEvent event) {
     var mdoc = findById(event.mDocId());
-    mdoc.setPreviewCount(event.mDocId());
+    mdoc.setPreviewCount(event.numPages());
     log.info("update mdoc preview count successfully");
   }
 
   @Override
-  public MDoc findById(Integer id) {
+  public MDoc findById(Long id) {
     return mDocRepository.findById(id)
         .orElseThrow(() -> new RuntimeException());
   }
 
   @Override
   public MDoc uploadDocument(MultipartFile file) {
-    Integer currentUserId = authService.getCurrentUserId();
+    Long currentUserId = authService.getCurrentUserId();
     String fileName = file.getOriginalFilename();
     String urlPath = minioStorageService.uploadFile(currentUserId, file);
     var extension = fileName.substring(fileName.lastIndexOf("."));
@@ -59,7 +60,7 @@ public class MDocServiceImpl implements MDocService {
   }
 
   @Override
-  public List<String> getPreivewUrls(int id) {
+  public List<String> getPreivewUrls(Long id) {
     List<String> previewUrls = new ArrayList<>();
     var mdoc = findById(id);
     int previewCount = mdoc.getPreviewCount();
@@ -72,5 +73,10 @@ public class MDocServiceImpl implements MDocService {
     }
     return previewUrls;
   }
+
+  @Override
+  public PresignedUrlRes download(Long id) {
+    return null;
+  };
 
 }

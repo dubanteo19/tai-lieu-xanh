@@ -44,7 +44,7 @@ public class MinioStorageService {
     this.minioClient = minioClient;
   }
 
-  public String generateObjectName(Integer userId, String folder, String originalFileName) {
+  public String generateObjectName(Long userId, String folder, String originalFileName) {
     String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
     String uuid = UUID.randomUUID().toString().substring(0, 8);
     String sanitizedFileName = originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
@@ -66,7 +66,7 @@ public class MinioStorageService {
     }
   }
 
-  public String uploadFile(Integer userId, MultipartFile file) {
+  public String uploadFile(Long userId, MultipartFile file) {
     String objectName = generateObjectName(userId, "doc", file.getOriginalFilename());
     try (var inputStream = file.getInputStream()) {
       var object = PutObjectArgs.builder()

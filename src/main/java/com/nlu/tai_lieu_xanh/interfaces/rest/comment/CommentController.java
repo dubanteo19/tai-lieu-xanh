@@ -15,19 +15,22 @@ import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentResponse;
 import com.nlu.tai_lieu_xanh.application.comment.service.CommentService;
 import com.nlu.tai_lieu_xanh.utils.LocationUtils;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/comments")
+@RequiredArgsConstructor
 public class CommentController {
   private final CommentService commentService;
 
   @DeleteMapping("{id}")
-  public ResponseEntity<Void> deleteComment(@PathVariable Integer id) {
+  public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
     commentService.delete(id);
     return ResponseEntity.noContent().build();
   }
 
   @PutMapping("/{id}/update")
-  public ResponseEntity<CommentResponse> updateComment(@PathVariable Integer postId,
+  public ResponseEntity<CommentResponse> updateComment(@PathVariable Long postId,
       @RequestBody CommentUpdateRequest request) {
     return ResponseEntity.ok(commentService.update(request));
   }

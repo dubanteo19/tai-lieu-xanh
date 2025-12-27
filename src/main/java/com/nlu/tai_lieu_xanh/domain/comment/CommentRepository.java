@@ -8,7 +8,7 @@ public interface CommentRepository {
 
   void delete(Comment comment);
 
-  Optional<Comment> findById(Integer id);
+  Optional<Comment> findById(Long id);
 
-  List<Comment> findAllByPostId(Integer postId);
+  List<Comment> findAllByPostId(Long postId);
 }

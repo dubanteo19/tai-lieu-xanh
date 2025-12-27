@@ -20,7 +20,7 @@ public class JpaUserRepository implements UserRepository {
   }
 
   @Override
-  public Optional<User> findById(Integer id) {
+  public Optional<User> findById(Long id) {
     return jpaRepo.findById(id);
   }
 

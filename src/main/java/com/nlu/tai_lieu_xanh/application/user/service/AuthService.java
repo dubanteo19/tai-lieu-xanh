@@ -21,5 +21,5 @@ public interface AuthService {
 
   void forgotPassword(String email);
 
-  Integer getCurrentUserId();
+  Long getCurrentUserId();
 }

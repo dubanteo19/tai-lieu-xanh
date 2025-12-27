@@ -26,12 +26,12 @@ public class JpaCommentRepository implements CommentRepository {
   }
 
   @Override
-  public Optional<Comment> findById(Integer id) {
+  public Optional<Comment> findById(Long id) {
     return springDataCommentRepository.findById(id);
   }
 
   @Override
-  public List<Comment> findAllByPostId(Integer postId) {
+  public List<Comment> findAllByPostId(Long postId) {
     return springDataCommentRepository.findAllByPostId(postId);
   }
 

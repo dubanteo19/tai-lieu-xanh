@@ -5,7 +5,7 @@ import java.util.Optional;
 public interface MDocRepository {
   MDoc save(MDoc mDoc);
 
-  Optional<MDoc> findById(Integer id);
+  Optional<MDoc> findById(Long id);
 
   Long getTotalDownload();
 }

@@ -1,15 +1,15 @@
-package com.nlu.tai_lieu_xanh.dto.response.postReport;
+package com.nlu.tai_lieu_xanh.application.post.report.dto.response;
 
 import com.nlu.tai_lieu_xanh.domain.report.ReportReason;
 import com.nlu.tai_lieu_xanh.domain.report.ReportStatus;
 
-public record PostReportRes(
-    Integer id,
+public record PostReportResponse(
+    Long id,
     ReportReason reason,
     String postTitle,
-    Integer postId,
-    Integer authorId,
-    Integer userId,
+    Long postId,
+    Long authorId,
+    Long userId,
     String fullName,
     String createdDate,
     ReportStatus status) {

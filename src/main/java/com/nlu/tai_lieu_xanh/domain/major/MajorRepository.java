@@ -10,7 +10,7 @@ public interface MajorRepository {
 
   List<Major> findAll();
 
-  Optional<Major> findById(Integer id);
+  Optional<Major> findById(Long id);
 
   Major save(Major major);
 

@@ -12,6 +12,10 @@ import com.nlu.tai_lieu_xanh.domain.user.User;
 
 @Component
 public class SharedMapper {
+
+  private static final DateTimeFormatter VIET_FOMATTER = DateTimeFormatter.ofPattern("dd 'tháng' MM 'lúc' HH:mm",
+      Locale.forLanguageTag("vi"));
+
   public AuthorResponse toAuthor(User user) {
     if (user == null) {
       return null;
@@ -23,9 +27,8 @@ public class SharedMapper {
     if (createdAt == null) {
       return null;
     }
-    var formatter = DateTimeFormatter.ofPattern("dd 'tháng' MM 'lúc' HH:mm", Locale.forLanguageTag("vi"));
 
-    return createdAt.format(formatter);
+    return createdAt.format(VIET_FOMATTER);
   }
 
   public String toStatus(CommentStatus status) {

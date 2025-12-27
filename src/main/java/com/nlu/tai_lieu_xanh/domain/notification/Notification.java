@@ -16,11 +16,24 @@ public class Notification extends AbstractModel {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
-  private String content; // The content of the notification
+  private String content;
 
   @Enumerated(EnumType.STRING)
-  private NotificationStatus status = NotificationStatus.UNREAD; // Default status is UNREAD
+  private NotificationStatus status = NotificationStatus.UNREAD;
 
   protected Notification() {
+  }
+
+  private Notification(User user, String content) {
+    this.user = user;
+    this.content = content;
+  }
+
+  public static Notification create(User user, String content) {
+    return new Notification(user, content);
+  }
+
+  public void markAsRead() {
+    this.status = NotificationStatus.READ;
   }
 }

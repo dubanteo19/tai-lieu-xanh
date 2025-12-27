@@ -3,7 +3,7 @@ package com.nlu.tai_lieu_xanh.application.user.service;
 import com.nlu.tai_lieu_xanh.domain.user.User;
 
 public interface UserService {
-  User findById(Integer userId);
+  User findById(Long userId);
 
-  void activateUser(Integer userId);
+  void activateUser(Long userId);
 }

@@ -17,7 +17,6 @@ public class MDocMapper {
         mDoc.getFileType().toString(),
         mDoc.getPages(),
         mDoc.getDownloads(),
-        mDoc.getFileSize(),
-        mDoc.getUrl());
+        mDoc.getFileSize());
   }
 }

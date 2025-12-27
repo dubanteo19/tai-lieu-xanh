@@ -17,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
   private UserRepository userRepository;
 
-  public User findById(Integer userId) {
+  public User findById(Long userId) {
     return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
   }
 
-  public UserProfileResponse findInfoById(Integer userId) {
+  public UserProfileResponse findInfoById(Long userId) {
     var user = findById(userId);
     return new UserProfileResponse(
         user.getFullName(),
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         user.getPosts().size());
   }
 
-  public UserProfileResponse updateInfo(Integer id, String fullName, String bio, MultipartFile avatar) {
+  public UserProfileResponse updateInfo(Long id, String fullName, String bio, MultipartFile avatar) {
     /*
      * var user = findById(id);
      * user.setFullName(fullName);
@@ -52,8 +52,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void activateUser(Integer userId) {
-    // TODO Auto-generated method stub
+  public void activateUser(Long userId) {
     throw new UnsupportedOperationException("Unimplemented method 'activateUser'");
   }
 

@@ -23,18 +23,16 @@ import com.nlu.tai_lieu_xanh.application.comment.service.CommentService;
 import com.nlu.tai_lieu_xanh.application.major.service.MajorService;
 import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
 import com.nlu.tai_lieu_xanh.application.post.dto.request.PostCreateRequest;
+import com.nlu.tai_lieu_xanh.application.post.dto.response.PostDetailResponse;
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
 import com.nlu.tai_lieu_xanh.application.post.service.PostService;
 import com.nlu.tai_lieu_xanh.domain.post.PostStatus;
-import com.nlu.tai_lieu_xanh.domain.user.dto.response.post.MajorWithPostsRes;
-import com.nlu.tai_lieu_xanh.domain.user.dto.response.post.PostDetailRes;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/posts")
+@RequiredArgsConstructor
 public class PostController {
   private final PostService postService;
   private final MajorService majorService;
@@ -42,11 +40,8 @@ public class PostController {
 
   @GetMapping()
   public ResponseEntity<List<PostResponse>> getAllPosts(
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "6") int size) {
-    Pageable pageable = PageRequest.of(page, size,
-        Sort.by(Sort.Direction.DESC, "createdDate"));
-    return ResponseEntity.ok(postService.findAllPost(pageable));
+      @RequestParam(defaultValue = "0") int cursor) {
+    return ResponseEntity.ok(postService.findAllPost(cursor));
   }
 
   @GetMapping("/review")
@@ -88,7 +83,7 @@ public class PostController {
 
   @GetMapping("/related")
   public ResponseEntity<List<PostResponse>> getRelatedPosts(
-      @RequestParam("postId") Integer postId) {
+      @RequestParam("postId") Long postId) {
     return ResponseEntity.ok(postService.findRelatedPosts(postId));
   }
 
@@ -98,7 +93,7 @@ public class PostController {
   }
 
   @GetMapping("/{id}/download")
-  public ResponseEntity<PresignedUrlRes> downloadDocument(@PathVariable Integer id) {
+  public ResponseEntity<PresignedUrlRes> downloadDocument(@PathVariable Long id) {
     var presignedUrl = postService.download(id);
     return ResponseEntity.ok(presignedUrl);
   }
@@ -106,7 +101,7 @@ public class PostController {
   @GetMapping("/search")
   public ResponseEntity<List<PostResponse>> searchPosts(
       @RequestParam(required = false) String fileType,
-      @RequestParam(required = false) Integer majorId,
+      @RequestParam(required = false) Long majorId,
       @RequestParam(required = false) List<String> tags,
       @RequestParam(required = false) String keyword,
       @RequestParam(defaultValue = "0") int page,
@@ -123,55 +118,55 @@ public class PostController {
   }
 
   @GetMapping("/{id}/detail")
-  public ResponseEntity<PostDetailRes> getPostDetailById(@PathVariable Integer id) {
+  public ResponseEntity<PostDetailRes> getPostDetailById(@PathVariable Long id) {
     return ResponseEntity.ok(postService.findPostDetailById(id));
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<String> deletePost(@PathVariable Integer id) {
+  public ResponseEntity<String> deletePost(@PathVariable Long id) {
     postService.setPostStatus(id, PostStatus.DELETED);
     return ResponseEntity.ok("post deleted");
   }
 
   @DeleteMapping("{id}/deep-delete")
-  public ResponseEntity<String> deepDeletePost(@PathVariable Integer id) {
+  public ResponseEntity<String> deepDeletePost(@PathVariable Long id) {
     postService.delete(id);
     return ResponseEntity.ok("post deleted");
   }
 
   @PostMapping("/{id}/reject")
-  public ResponseEntity<String> rejectPost(@PathVariable Integer id,
+  public ResponseEntity<String> rejectPost(@PathVariable Long id,
       @RequestParam String reason) {
     postService.rejectPost(id, PostStatus.REJECTED, reason);
     return ResponseEntity.ok("post rejected");
   }
 
   @PostMapping("/{id}/ban")
-  public ResponseEntity<String> banPost(@PathVariable Integer id) {
+  public ResponseEntity<String> banPost(@PathVariable Long id) {
     postService.setPostStatus(id, PostStatus.BAN);
     return ResponseEntity.ok("post published");
   }
 
   @PostMapping("/{id}/approve")
-  public ResponseEntity<String> approvePost(@PathVariable Integer id) {
+  public ResponseEntity<String> approvePost(@PathVariable Long id) {
     postService.setPostStatus(id, PostStatus.PUBLISHED);
     return ResponseEntity.ok("post published");
   }
 
   @PostMapping("/{id}/view")
-  public ResponseEntity<String> viewPost(@PathVariable Integer id) {
+  public ResponseEntity<String> viewPost(@PathVariable Long id) {
     postService.viewPost(id);
     return ResponseEntity.ok("viewed post");
   }
 
   @PostMapping
-  public ResponseEntity<PostDetailRes> createPost(
+  public ResponseEntity<PostDetailResponse> createPost(
       @RequestParam("file") MultipartFile file,
       @RequestParam("title") String title,
       @RequestParam("description") String description,
-      @RequestParam("majorId") Integer majorId,
+      @RequestParam("majorId") Long majorId,
       @RequestParam("tags") String tags, // JSON string of tags
-      @RequestParam("authorId") Integer authorId) throws JsonProcessingException {
+      @RequestParam("authorId") Long authorId) throws JsonProcessingException {
     // Convert tags from JSON string to List<String>
     ObjectMapper objectMapper = new ObjectMapper();
     List<String> tagList = objectMapper.readValue(tags, new TypeReference<List<String>>() {
@@ -183,7 +178,7 @@ public class PostController {
   }
 
   @GetMapping("/{id}/comments")
-  public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Integer postId) {
+  public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long postId) {
     return ResponseEntity.ok(commentService.getAllByPostId(postId));
   }
 }
