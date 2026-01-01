@@ -8,7 +8,9 @@ import com.nlu.tai_lieu_xanh.application.major.dto.response.MajorResponse;
 import com.nlu.tai_lieu_xanh.application.major.dto.response.MajorWithPostCountResponse;
 import com.nlu.tai_lieu_xanh.application.major.mapper.MajorMapper;
 import com.nlu.tai_lieu_xanh.application.major.service.MajorService;
+import com.nlu.tai_lieu_xanh.domain.major.Major;
 import com.nlu.tai_lieu_xanh.domain.major.MajorRepository;
+import com.nlu.tai_lieu_xanh.exception.MajorNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +37,11 @@ public class MajorServiceImpl implements MajorService {
     var majorsWithPostCount = majorRepository.findAllMajorsWithPostCount();
     return majorMapper
         .toMajorWithPostCountResponseList(majorsWithPostCount);
+  }
+
+  @Override
+  public Major findById(Long id) {
+    return majorRepository.findById(id).orElseThrow(MajorNotFoundException::new);
   }
 
 }

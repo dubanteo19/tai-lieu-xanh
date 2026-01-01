@@ -15,18 +15,8 @@ public interface PostService {
 
   PostResponse create(PostCreateRequest request, MultipartFile file);
 
-  void viewPost(Integer id);
+  void viewPost(Long id);
 
-  PostDetailResponse getPostDetail(Integer postId);
+  PostDetailResponse findPostDetail(Long postId);
 
-  List<PostResponse> getNewPosts();
-
-  List<PostResponse> getHotPosts();
-
-  List<PostResponse> getRelatedPosts(Integer postId);
-
-  List<PostResponse> searchPosts(String fileType, Integer majorId, List<String> tags,
-      String keyword, String sortBy, String direction, int page, int size);
-
-  List<PostResponse> getPostsByIds(String Ids);
 }

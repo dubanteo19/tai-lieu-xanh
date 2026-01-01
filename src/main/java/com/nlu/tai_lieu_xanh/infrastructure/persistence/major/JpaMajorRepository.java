@@ -4,14 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
+import org.xnio.channels.UnsupportedOptionException;
 
 import com.nlu.tai_lieu_xanh.domain.major.Major;
 import com.nlu.tai_lieu_xanh.domain.major.MajorRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class JpaMajorRepository implements MajorRepository {
   private SpringDataMajorRepository springDataMajorRepository;
 
@@ -42,7 +43,7 @@ public class JpaMajorRepository implements MajorRepository {
 
   @Override
   public List<MajorWithPostCountProjection> findAllMajorsWithPostCount() {
-    return springDataMajorRepository.findAllMajorsWithPostCount();
+    throw new UnsupportedOptionException("Not yet implement");
   }
 
 }

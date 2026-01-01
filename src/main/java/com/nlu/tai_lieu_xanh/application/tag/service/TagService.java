@@ -1,6 +1,7 @@
 package com.nlu.tai_lieu_xanh.application.tag.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.nlu.tai_lieu_xanh.application.tag.dto.response.TagResponse;
 import com.nlu.tai_lieu_xanh.domain.tag.Tag;
@@ -12,7 +13,7 @@ public interface TagService {
 
   Tag save(String tagName);
 
-  List<Tag> getOrSaveTags(List<String> tagNames);
+  Set<Tag> getOrSaveTags(List<String> tagNames);
 
   List<TagResponse> findAll();
 }

@@ -19,7 +19,7 @@ public class MDocController {
   private final MDocService mDocService;
 
   @GetMapping("{id}/previews")
-  public ResponseEntity<List<String>> getPreivewUrls(@PathVariable int id) {
+  public ResponseEntity<List<String>> getPreivewUrls(@PathVariable Long id) {
     List<String> previewUrls = mDocService.getPreivewUrls(id);
     return ResponseEntity.ok(previewUrls);
   }

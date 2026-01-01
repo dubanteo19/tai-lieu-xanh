@@ -13,7 +13,7 @@ public interface MDocService {
 
   MDoc findById(Long id);
 
-  MDoc uploadDocument(MultipartFile file);
+  MDoc uploadDocument(MultipartFile file, Long authorId);
 
   List<String> getPreivewUrls(Long id);
 

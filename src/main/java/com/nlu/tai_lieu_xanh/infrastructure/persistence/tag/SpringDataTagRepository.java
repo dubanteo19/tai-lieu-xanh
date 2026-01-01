@@ -10,5 +10,5 @@ import com.nlu.tai_lieu_xanh.domain.tag.Tag;
 public interface SpringDataTagRepository extends JpaRepository<Tag, Integer> {
   Optional<Tag> findByName(String name);
 
-  List<Tag> findbyNameIn(List<String> names);
+  List<Tag> findByNameIn(List<String> names);
 }

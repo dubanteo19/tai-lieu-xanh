@@ -1,6 +1,8 @@
 package com.nlu.tai_lieu_xanh.application.tag.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -35,7 +37,7 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public List<Tag> getOrSaveTags(List<String> tagNames) {
+  public Set<Tag> getOrSaveTags(List<String> tagNames) {
     var existingTags = tagRepository.findByNameIn(tagNames);
     var existingTagNames = existingTags.stream().map(Tag::getName).toList();
     var newTags = tagNames.stream()
@@ -43,7 +45,7 @@ public class TagServiceImpl implements TagService {
         .map(this::save)
         .toList();
     existingTags.addAll(newTags);
-    return existingTags;
+    return new HashSet<>(existingTags);
   }
 
   @Override

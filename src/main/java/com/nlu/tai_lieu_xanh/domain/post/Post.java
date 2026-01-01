@@ -1,7 +1,9 @@
 package com.nlu.tai_lieu_xanh.domain.post;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.nlu.tai_lieu_xanh.domain.comment.Comment;
 import com.nlu.tai_lieu_xanh.domain.major.Major;
@@ -38,8 +40,8 @@ public class Post extends AbstractModel {
   String description;
   String thumb;
   @OneToOne
-  @JoinColumn(name = "doc_id")
-  MDoc doc;
+  @JoinColumn(name = "mdoc_id")
+  MDoc mdoc;
   @ManyToOne
   @JoinColumn(name = "major_id")
   Major major;
@@ -47,22 +49,47 @@ public class Post extends AbstractModel {
   List<Comment> comments = new ArrayList<>();
 
   @ManyToMany
-  @JoinTable(
-    name = "post_tags",
-    joinColumns = @JoinColumn(name = "post_id"),
-    inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  List<Tag> tags = new ArrayList<>();
+  @JoinTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  Set<Tag> tags = new HashSet<>();
 
   @Enumerated(EnumType.STRING)
   PostStatus postStatus = PostStatus.PUBLISHED;
-  int views = 0;
-  int likes = 0;
+  int viewCount = 0;
+  int likeCount = 0;
 
   protected Post() {
   }
 
   public Post createPost() {
     return new Post();
+  }
+
+  public void view() {
+    this.viewCount++;
+  }
+
+  public void delete() {
+    this.postStatus = PostStatus.DELETED;
+  }
+
+  public void reject() {
+    this.postStatus = PostStatus.REJECTED;
+  }
+
+  public void setMajor(Major major) {
+    this.major = major;
+  }
+
+  public void setAuthor(User user) {
+    this.author = user;
+  }
+
+  public void setTags(Set<Tag> tags) {
+    this.tags = tags;
+  }
+
+  public void setMDoc(MDoc mdoc) {
+    this.mdoc = mdoc;
   }
 
 }

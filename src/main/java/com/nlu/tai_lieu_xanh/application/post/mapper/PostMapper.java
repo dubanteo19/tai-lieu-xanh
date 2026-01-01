@@ -30,7 +30,7 @@ public class PostMapper {
   public PostDetailResponse toPostDetailResponse(Post post) {
     var author = sharedMapper.toAuthor(post.getAuthor());
     var major = majorMapper.toMajorResponse(post.getMajor());
-    var mdoc = mDocMapper.toMDocResponse(post.getDoc());
+    var mdoc = mDocMapper.toMDocResponse(post.getMdoc());
     String formatedCreatedDate = sharedMapper.formatDate(post.getCreatedDate());
     List<TagResponse> tags = List.of();
     return new PostDetailResponse(
@@ -45,9 +45,15 @@ public class PostMapper {
 
   };
 
-  public PostResponse toPostResponse(Post post, MetaData meta, List<TagResponse> tags) {
+  public PostResponse toPostResponse(Post post, List<TagResponse> tags) {
     var major = majorMapper.toMajorResponse(post.getMajor());
     var author = sharedMapper.toAuthor(post.getAuthor());
+    String formatedCreatedDate = sharedMapper.formatDate(post.getCreatedDate());
+    var meta = new MetaData(
+        post.getViewCount(),
+        0,
+        post.getLikeCount(),
+        formatedCreatedDate);
     return new PostResponse(
         post.getId(),
         post.getTitle(),

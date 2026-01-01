@@ -9,9 +9,9 @@ import com.nlu.tai_lieu_xanh.domain.report.ReportReason;
 import com.nlu.tai_lieu_xanh.domain.report.ReportStatus;
 
 public interface PostReportService {
-  void reportPost(Integer postId, ReportReason reason);
+  void reportPost(Long postId, ReportReason reason);
 
-  void updateReportStatus(Integer reportId, ReportStatus status);
+  void updateReportStatus(Long reportId, ReportStatus status);
 
   List<PostReportResponse> findReports(Pageable pageable, ReportStatus reportStatus);
 }

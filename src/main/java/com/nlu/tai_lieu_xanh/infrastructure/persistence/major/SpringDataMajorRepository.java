@@ -15,11 +15,13 @@ public interface SpringDataMajorRepository extends JpaRepository<Major, Long> {
           """)
   List<Major> searchMajorByName(@Param("name") String name);
 
-  @Query("""
-      SELECT m.id as id, m.name as majorName, COUNT(p) as postCount
-      FROM Major m
-      LEFT JOIN m.posts p
-      GROUP BY m.id, m.name
-          """)
-  List<MajorWithPostCountProjection> findAllMajorsWithPostCount();
+  /*
+   * @Query("""
+   * SELECT m.id as id, m.name as majorName, COUNT(p) as postCount
+   * FROM Major m
+   * LEFT JOIN m.posts p
+   * GROUP BY m.id, m.name
+   * """)
+   * List<MajorWithPostCountProjection> findAllMajorsWithPostCount();
+   */
 }

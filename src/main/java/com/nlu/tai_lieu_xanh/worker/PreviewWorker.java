@@ -17,7 +17,7 @@ import com.nlu.tai_lieu_xanh.utils.PdfPreviewGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Service
+//@Service
 @Log4j2
 @RequiredArgsConstructor
 public class PreviewWorker {

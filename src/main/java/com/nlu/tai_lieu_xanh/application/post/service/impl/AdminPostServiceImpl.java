@@ -8,11 +8,9 @@ import org.springframework.stereotype.Service;
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
 import com.nlu.tai_lieu_xanh.application.post.mapper.PostMapper;
 import com.nlu.tai_lieu_xanh.application.post.service.AdminPostService;
-import com.nlu.tai_lieu_xanh.application.tag.service.TagService;
+import com.nlu.tai_lieu_xanh.domain.post.Post;
 import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
-import com.nlu.tai_lieu_xanh.domain.post.PostSpecification;
-import com.nlu.tai_lieu_xanh.domain.post.PostStatus;
-import com.nlu.tai_lieu_xanh.domain.user.UserRepository;
+import com.nlu.tai_lieu_xanh.exception.PostNotFoundException;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,50 +22,17 @@ public class AdminPostServiceImpl implements AdminPostService {
   private final PostMapper postMapper;
 
   @Override
-  public List<PostResponse> getAllDeletedPosts(Pageable pageable) {
-    postRepository.getAllDeletedPosts(pageable);
-  }
-
-  @Override
-  public List<PostResponse> getAll(Pageable pageable) {
-
-  }
-
-  @Override
+  @Transactional
   public void delete(Long id) {
     var post = findById(id);
-    postRepository.delete(post);
+    post.delete();
   }
 
   @Override
-  public void rejectPost(Long id, String reason) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'rejectPost'");
-  }
-
-  @Override
-  public List<PostResponse> findAllReviewPost(Pageable pageable) {
-    var spec = PostSpecification.isReview();
-    return postRepository.findAll(spec, pageable)
-        .stream()
-        .map(postMapper::toPostResponse)
-        .toList();
-  }
-
   @Transactional
-  public void setPostStatus(Long id, PostStatus postStatus) {
+  public void rejectPost(Long id, String reason) {
     var post = findById(id);
-    post.setPostStatus(postStatus);
-  }
-
-  public List<PostResponse> findAllReviewPost(Pageable pageable) {
-  }
-
-  public void rejectPost(Long id, PostStatus postStatus, String reason) {
-    var post = findById(id);
-    var userId = post.getAuthor().getId();
-    post.setPostStatus(postStatus);
-    notificationService.createNotification(userId, "Tài liệu của bạn đã bị từ chối vì lý do %s".formatted(reason));
+    post.reject();
   }
 
   @Override
@@ -79,6 +44,24 @@ public class AdminPostServiceImpl implements AdminPostService {
   @Override
   public List<PostResponse> getAllReviewPost(Pageable pageable) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getAllReviewPost'");
+    throw new UnsupportedOperationException("Unimplemented method 'getAllDeletedPost'");
+  }
+
+  @Override
+  public List<PostResponse> getAllDeletedPost(Pageable pageable) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getAllDeletedPost'");
+  }
+
+  @Override
+  public Post findById(Long id) {
+    return postRepository.findById(id)
+        .orElseThrow(() -> new PostNotFoundException("post with id " + id + " not found"));
+  }
+
+  @Override
+  public void approvePost(Long id) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'approvePost'");
   }
 }

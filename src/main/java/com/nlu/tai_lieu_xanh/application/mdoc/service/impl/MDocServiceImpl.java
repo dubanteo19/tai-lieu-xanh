@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
 import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
-import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
 import com.nlu.tai_lieu_xanh.config.RabbitMQConfig;
 import com.nlu.tai_lieu_xanh.domain.mdoc.FileType;
 import com.nlu.tai_lieu_xanh.domain.mdoc.MDoc;
@@ -18,6 +17,7 @@ import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewGenerate
 import com.nlu.tai_lieu_xanh.infrastructure.storage.MinioStorageService;
 import com.nlu.tai_lieu_xanh.utils.PageExtractor;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -28,7 +28,6 @@ public class MDocServiceImpl implements MDocService {
 
   private final MDocRepository mDocRepository;
   private final MinioStorageService minioStorageService;
-  private final AuthService authService;
 
   @Override
 
@@ -46,16 +45,17 @@ public class MDocServiceImpl implements MDocService {
   }
 
   @Override
-  public MDoc uploadDocument(MultipartFile file) {
-    Long currentUserId = authService.getCurrentUserId();
+  @Transactional
+  public MDoc uploadDocument(MultipartFile file, Long authorId) {
     String fileName = file.getOriginalFilename();
-    String urlPath = minioStorageService.uploadFile(currentUserId, file);
+    String objectName = minioStorageService.uploadFile(authorId, file);
     var extension = fileName.substring(fileName.lastIndexOf("."));
     var fileType = extension.equalsIgnoreCase(".pdf") ? FileType.PDF : FileType.DOCX;
     long fileSize = file.getSize(); // In bytes
     int pages;
     pages = PageExtractor.extractPageCount(file);
-    var mDoc = MDoc.create(fileName, fileSize, pages, fileType);
+    var mDoc = MDoc.create(fileName, objectName, fileSize, pages, fileType);
+    log.info("upload document successfully");
     return mDocRepository.save(mDoc);
   }
 

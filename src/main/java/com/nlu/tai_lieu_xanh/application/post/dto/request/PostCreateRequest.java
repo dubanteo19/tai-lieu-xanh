@@ -5,7 +5,6 @@ import java.util.List;
 public record PostCreateRequest(
     String title,
     String description,
-    int authorId,
-    int majorId,
+    Long majorId,
     List<String> tags) {
 }

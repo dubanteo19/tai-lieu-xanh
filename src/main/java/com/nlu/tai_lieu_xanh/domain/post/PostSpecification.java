@@ -21,7 +21,7 @@ public class PostSpecification {
     return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("postStatus"), PostStatus.DELETED);
   }
 
-  public static Specification<Post> hasMajorId(Integer majorId) {
+  public static Specification<Post> hasMajorId(Long majorId) {
     return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("major").get("id"), majorId);
   }
 
@@ -45,7 +45,7 @@ public class PostSpecification {
     return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("doc").get("fileType"), fileType);
   }
 
-  public static Specification<Post> isNotId(Integer postId) {
+  public static Specification<Post> isNotId(Long postId) {
     return (root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get("id"), postId);
   }
 
