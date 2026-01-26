@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "tags")
+@Table(name = "tag")
 public class Tag extends AbstractModel {
   @Column(nullable = false, unique = true)
   private String name;

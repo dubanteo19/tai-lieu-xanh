@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 
 @Entity
-@Table(name = "mdocs")
+@Table(name = "mdoc")
 @Getter
 public class MDoc extends AbstractModel {
   private String fileName;

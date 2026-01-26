@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "majors")
+@Table(name = "major")
 public class Major extends AbstractModel {
   @Column(nullable = false, unique = true)
   String name;

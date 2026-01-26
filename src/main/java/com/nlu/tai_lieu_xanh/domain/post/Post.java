@@ -29,7 +29,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "posts")
+@Table(name = "post")
 public class Post extends AbstractModel {
   @ManyToOne
   @JoinColumn(name = "author_id")
@@ -49,7 +49,7 @@ public class Post extends AbstractModel {
   List<Comment> comments = new ArrayList<>();
 
   @ManyToMany
-  @JoinTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  @JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
   Set<Tag> tags = new HashSet<>();
 
   @Enumerated(EnumType.STRING)

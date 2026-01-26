@@ -109,4 +109,5 @@ public class PostController {
   public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long postId) {
     return ResponseEntity.ok(commentService.getAllByPostId(postId));
   }
+
 }

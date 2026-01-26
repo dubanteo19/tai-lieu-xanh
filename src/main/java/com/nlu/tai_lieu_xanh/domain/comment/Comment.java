@@ -14,7 +14,7 @@ import lombok.Getter;
 
 @Getter
 @Entity
-@Table(name = "comments")
+@Table(name = "comment")
 public class Comment extends AbstractModel {
   private String content;
   @Enumerated(EnumType.STRING)

@@ -87,9 +87,8 @@ public class AuthServiceImpl implements AuthService {
       throw new AccessDeniedException("Account ban");
     }
     String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-    String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
     var userSummary = new UserSummary(user.getId(), user.getEmail(), user.getFullName(), user.getAvatar());
-    return new LoginResponse(token, refreshToken, userSummary);
+    return new LoginResponse(token, userSummary);
   }
 
   @Override
@@ -109,13 +108,12 @@ public class AuthServiceImpl implements AuthService {
     }
     // Generate new tokens
     String newAccessToken = jwtUtil.generateToken(user.getEmail(), user.getRole());
-    String newRefreshToken = jwtUtil.generateRefreshToken(user.getEmail());
     var userSummary = new UserSummary(
         user.getId(),
         user.getEmail(),
         user.getFullName(),
         user.getAvatar());
-    return new LoginResponse(newAccessToken, newRefreshToken, userSummary);
+    return new LoginResponse(newAccessToken, userSummary);
   }
 
   @Override

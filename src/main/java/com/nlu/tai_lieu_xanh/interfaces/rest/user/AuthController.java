@@ -29,6 +29,11 @@ public class AuthController {
     return ResponseEntity.ok(authService.register(request));
   }
 
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> login(@RequestBody UserLoginRequest request) {
+    return ResponseEntity.ok(authService.login(request));
+  }
+
   @GetMapping("/verify")
   public ResponseEntity<VerifyResponse> verifyUser(@RequestParam("token") String token) {
     return ResponseEntity.ok(
@@ -40,8 +45,4 @@ public class AuthController {
     return ResponseEntity.ok(authService.refreshToken(request));
   }
 
-  @PostMapping("/login")
-  public ResponseEntity<LoginResponse> login(@RequestBody UserLoginRequest request) {
-    return ResponseEntity.ok(authService.login(request));
-  }
 }

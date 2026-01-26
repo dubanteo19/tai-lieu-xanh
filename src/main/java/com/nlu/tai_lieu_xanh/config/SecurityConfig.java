@@ -28,6 +28,8 @@ public class SecurityConfig {
   }
 
   public static final List<String> PUBLIC_ENDPOINTS = List.of(
+      "/auth/**",
+      "/sse/**",
       "/majors/**",
       "/documents/**",
       "/posts/**",
@@ -39,7 +41,6 @@ public class SecurityConfig {
     http
         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers("/auth/**").permitAll()
             .requestMatchers(PUBLIC_ENDPOINTS.toArray(new String[0])).permitAll()
             .requestMatchers("/user/**").hasRole("USER")
             .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -56,7 +57,7 @@ public class SecurityConfig {
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
     var configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+    configuration.setAllowedOrigins(List.of("http://localhost:5173","https://hoppscotch.io"));
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);

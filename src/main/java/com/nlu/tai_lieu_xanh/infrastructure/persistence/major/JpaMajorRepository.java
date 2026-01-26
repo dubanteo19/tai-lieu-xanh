@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class JpaMajorRepository implements MajorRepository {
-  private SpringDataMajorRepository springDataMajorRepository;
+  private final SpringDataMajorRepository springDataMajorRepository;
 
   @Override
   public List<Major> searchMajorByName(String name) {

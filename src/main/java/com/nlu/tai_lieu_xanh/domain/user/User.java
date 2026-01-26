@@ -23,7 +23,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "users")
+@Table(name = "user")
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class User {
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
   private List<Post> posts = new ArrayList<>();
   @ManyToMany
-  @JoinTable(name = "user_friends", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "friend_id"))
+  @JoinTable(name = "user_friend", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "friend_id"))
   private List<User> friends = new ArrayList<>();
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   private List<Comment> comments = new ArrayList<>();
