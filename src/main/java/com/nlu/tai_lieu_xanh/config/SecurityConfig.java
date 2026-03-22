@@ -57,7 +57,7 @@ public class SecurityConfig {
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
     var configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("http://localhost:5173","https://hoppscotch.io"));
+    configuration.setAllowedOrigins(List.of("http://localhost:5173"));
     configuration.setAllowedMethods(List.of("*"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);

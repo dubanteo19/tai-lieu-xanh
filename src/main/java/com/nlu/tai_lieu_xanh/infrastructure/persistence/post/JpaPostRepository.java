@@ -1,5 +1,6 @@
 package com.nlu.tai_lieu_xanh.infrastructure.persistence.post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,11 +36,6 @@ public class JpaPostRepository implements PostRepository {
   }
 
   @Override
-  public List<Post> getAll(Pageable pageable) {
-    return springDataPostRepository.findAll(pageable).toList();
-  }
-
-  @Override
   public void rejectPost(Long id) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'rejectPost'");
@@ -47,20 +43,23 @@ public class JpaPostRepository implements PostRepository {
 
   @Override
   public Optional<Post> findById(Long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    return springDataPostRepository.findById(id);
   }
 
   @Override
   public Post save(Post post) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'save'");
+    return springDataPostRepository.save(post);
   }
 
   @Override
   public void viewPost(Long id) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'viewPost'");
+  }
+
+  @Override
+  public List<Post> findNextPosts(LocalDateTime cursor, Pageable pageable) {
+    return springDataPostRepository.findNextPosts(cursor, pageable);
   }
 
 }

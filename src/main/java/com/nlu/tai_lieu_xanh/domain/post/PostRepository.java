@@ -1,5 +1,6 @@
 package com.nlu.tai_lieu_xanh.domain.post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +13,7 @@ public interface PostRepository {
 
   List<Post> getAllDeletedPosts(Pageable pageable);
 
-  List<Post> getAll(Pageable pageable);
+  List<Post> findNextPosts(LocalDateTime cursor, Pageable pageable);
 
   void rejectPost(Long id);
 

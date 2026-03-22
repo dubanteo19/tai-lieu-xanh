@@ -15,7 +15,7 @@ import java.util.Date;
 public class JwtUtil {
     private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     private final SecretKey secretRefreshKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 15; // 15 minutes
+    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60; // 60 minutes
     private static final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7 days
 
     public String generateToken(String username, Role role) {
@@ -62,6 +62,14 @@ public class JwtUtil {
         return parseToken(token).get("role", String.class);
     }
 
+    public boolean validateRefreshToken(String token) {
+        try {
+            parseRefreshToken(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
     public boolean validateToken(String token) {
         try {
             parseToken(token);

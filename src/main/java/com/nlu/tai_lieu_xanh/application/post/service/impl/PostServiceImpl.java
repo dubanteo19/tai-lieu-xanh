@@ -1,9 +1,8 @@
 package com.nlu.tai_lieu_xanh.application.post.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,11 +14,13 @@ import com.nlu.tai_lieu_xanh.application.post.dto.response.PostDetailResponse;
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
 import com.nlu.tai_lieu_xanh.application.post.mapper.PostMapper;
 import com.nlu.tai_lieu_xanh.application.post.service.PostService;
+import com.nlu.tai_lieu_xanh.application.shared.response.CursorResponse;
 import com.nlu.tai_lieu_xanh.application.tag.mapper.TagMapper;
 import com.nlu.tai_lieu_xanh.application.tag.service.TagService;
 import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
 import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
 import com.nlu.tai_lieu_xanh.domain.user.UserRepository;
+import com.nlu.tai_lieu_xanh.exception.PostNotFoundException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewEvent;
 import com.nlu.tai_lieu_xanh.producer.PreviewMessageProducer;
@@ -56,12 +57,14 @@ public class PostServiceImpl implements PostService {
     var mdoc = mDocService.uploadDocument(file, currentUserId);
     post.setMDoc(mdoc);
     var savedPost = postRepository.save(post);
-    var previewMessage = new PreviewEvent(mdoc.getId(), Math.min(mdoc.getPages(), 5), mdoc.getObjectName());
+    var previewMessage = new PreviewEvent(
+        mdoc.getId(),
+        Math.min(mdoc.getPages(), 5),
+        mdoc.getObjectName());
     previewMessageProducer.sendCreatePreviewTask(previewMessage);
     // TODO notificationService.createNotification(postRequest.authorId(), "Tài liệu
     // của bạn đang được chờ duyệt");
-    var tagReponseList = tagMapper.toTagResponseList(new ArrayList<>(post.getTags()));
-
+    var tagReponseList = tagMapper.toTagResponseList(post.getTags());
     return postMapper.toPostResponse(savedPost, tagReponseList);
   }
 
@@ -71,18 +74,31 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  public List<PostResponse> findPublishedPosts(Pageable pageable) {
-    var posts = postRepository.getAll(pageable);
-    return posts.stream().map(p -> {
-      var postTagReponseList = tagMapper.toTagResponseList(new ArrayList<>(p.getTags()));
+  public CursorResponse<PostResponse> findPublishedPosts(LocalDateTime cursor) {
+    int size = 10;
+    var pageable = PageRequest.of(0, size);
+    var posts = postRepository.findNextPosts(cursor, pageable);
+    boolean hasNext = posts.size() == size;
+    LocalDateTime nextCursor = null;
+    if (hasNext) {
+      var lastPost = posts.get(posts.size() - 1);
+      nextCursor = lastPost.getCreatedDate();
+    }
+    var items = posts.stream().map(p -> {
+      var postTagReponseList = tagMapper.toTagResponseList(p.getTags());
       return postMapper.toPostResponse(p, postTagReponseList);
     }).toList();
+    return new CursorResponse<>(items, nextCursor, hasNext);
   }
 
   @Override
+  @Transactional
   public PostDetailResponse findPostDetail(Long postId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'findPostDetail'");
+    var post = postRepository
+        .findById(postId)
+        .orElseThrow(() -> new PostNotFoundException("post not found"));
+    var postTagReponseList = tagMapper.toTagResponseList(post.getTags());
+    return postMapper.toPostDetailResponse(post, postTagReponseList);
   }
 
 }

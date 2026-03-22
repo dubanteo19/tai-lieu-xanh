@@ -50,6 +50,7 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public List<TagResponse> findAll() {
-    return tagMapper.toTagResponseList(tagRepository.findAll());
+    var tagSet = new HashSet<>(tagRepository.findAll());
+    return tagMapper.toTagResponseList(tagSet);
   }
 }

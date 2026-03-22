@@ -18,7 +18,7 @@ public class TagMapper {
     return new TagResponse(tag.getId(), tag.getName());
   }
 
-  public List<TagResponse> toTagResponseList(List<Tag> tags) {
+  public List<TagResponse> toTagResponseList(Set<Tag> tags) {
     if (tags == null || tags.isEmpty()) {
       return List.of();
     }

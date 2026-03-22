@@ -38,7 +38,6 @@ public class Post extends AbstractModel {
   @Lob
   @Column(columnDefinition = "text")
   String description;
-  String thumb;
   @OneToOne
   @JoinColumn(name = "mdoc_id")
   MDoc mdoc;
@@ -58,10 +57,16 @@ public class Post extends AbstractModel {
   int likeCount = 0;
 
   protected Post() {
+
   }
 
-  public Post createPost() {
-    return new Post();
+  protected Post(String title, String description) {
+    this.title = title;
+    this.description = description;
+  }
+
+  public static Post create(String title, String description) {
+    return new Post(title, description);
   }
 
   public void view() {

@@ -13,9 +13,11 @@ import com.nlu.tai_lieu_xanh.config.RabbitMQConfig;
 import com.nlu.tai_lieu_xanh.domain.mdoc.FileType;
 import com.nlu.tai_lieu_xanh.domain.mdoc.MDoc;
 import com.nlu.tai_lieu_xanh.domain.mdoc.MDocRepository;
+import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
 import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewGeneratedEvent;
 import com.nlu.tai_lieu_xanh.infrastructure.storage.MinioStorageService;
 import com.nlu.tai_lieu_xanh.utils.PageExtractor;
+import com.nlu.tai_lieu_xanh.utils.UrlPreviewer;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +32,10 @@ public class MDocServiceImpl implements MDocService {
   private final MinioStorageService minioStorageService;
 
   @Override
-
   @RabbitListener(queues = RabbitMQConfig.PREVIEW_GENERATED_QUEUE)
   public void handlePreivewGeneratedEvent(PreviewGeneratedEvent event) {
     var mdoc = findById(event.mDocId());
+
     mdoc.setPreviewCount(event.numPages());
     log.info("update mdoc preview count successfully");
   }
@@ -61,17 +63,9 @@ public class MDocServiceImpl implements MDocService {
 
   @Override
   public List<String> getPreivewUrls(Long id) {
-    List<String> previewUrls = new ArrayList<>();
     var mdoc = findById(id);
     int previewCount = mdoc.getPreviewCount();
-    String HOST = "http://localhost";
-    String PORT = "9000";
-    String prefix = HOST + ":" + PORT + "/previews/doc-" + id + "/page-";
-    for (int i = 0; i < previewCount; i++) {
-      String url = prefix + (i + 1) + ".webp";
-      previewUrls.add(url);
-    }
-    return previewUrls;
+    return UrlPreviewer.generate(mdoc.getId(), previewCount);
   }
 
   @Override

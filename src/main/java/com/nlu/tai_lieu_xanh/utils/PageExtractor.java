@@ -5,7 +5,7 @@ import java.io.InputStream;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.web.multipart.MultipartFile;
 
-public class PageExtractor {
+public final class PageExtractor {
 
   public static int extractPageCount(MultipartFile file) {
     String fileType = file.getContentType();

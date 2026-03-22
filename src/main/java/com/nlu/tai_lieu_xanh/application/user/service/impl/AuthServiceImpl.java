@@ -27,9 +27,11 @@ import com.nlu.tai_lieu_xanh.security.CustomUserDetails;
 import com.nlu.tai_lieu_xanh.utils.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @RequiredArgsConstructor
 @Service
+@Log4j2
 public class AuthServiceImpl implements AuthService {
 
   private final UserRepository userRepository;
@@ -74,27 +76,32 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public LoginResponse login(UserLoginRequest request) {
+    String email = request.email();
     var user = userRepository
-        .findByEmail(request.email())
-        .orElseThrow(UserNotFoundException::new);
-    if (user != null && !bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
+        .findByEmail(email)
+        .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
+    if (user.getStatus() == UserStatus.INACTIVE ||
+        user.getStatus() == UserStatus.BAN) {
+      throw new AccessDeniedException("Account inactive or ban");
+    }
+    if (!bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
       throw new BadCredentialsException("Bad credentials");
     }
-    if (user.getStatus() == UserStatus.INACTIVE) {
-      throw new AccessDeniedException("Account inactive");
-    }
-    if (user.getStatus() == UserStatus.BAN) {
-      throw new AccessDeniedException("Account ban");
-    }
     String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-    var userSummary = new UserSummary(user.getId(), user.getEmail(), user.getFullName(), user.getAvatar());
-    return new LoginResponse(token, userSummary);
+    String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+    var userSummary = new UserSummary(
+        user.getId(),
+        user.getEmail(),
+        user.getFullName(),
+        user.getAvatar());
+    log.info("User {} login successfully", email);
+    return new LoginResponse(token, refreshToken, userSummary);
   }
 
   @Override
   public LoginResponse refreshToken(RefreshTokenRequest request) {
     // Validate the refresh token
-    if (!jwtUtil.validateToken(request.refreshToken())) {
+    if (!jwtUtil.validateRefreshToken(request.refreshToken())) {
       throw new IllegalArgumentException("Invalid or expired refresh token");
     }
     // Extract the user's email from the refresh token
@@ -108,12 +115,13 @@ public class AuthServiceImpl implements AuthService {
     }
     // Generate new tokens
     String newAccessToken = jwtUtil.generateToken(user.getEmail(), user.getRole());
+    log.info("User {} refresh token successfully", email);
     var userSummary = new UserSummary(
         user.getId(),
         user.getEmail(),
         user.getFullName(),
         user.getAvatar());
-    return new LoginResponse(newAccessToken, userSummary);
+    return new LoginResponse(newAccessToken, request.refreshToken(), userSummary);
   }
 
   @Override
@@ -122,6 +130,7 @@ public class AuthServiceImpl implements AuthService {
     if (auth == null || !auth.isAuthenticated()) {
       throw new AccessDeniedException("User not authenticated");
     }
+    System.out.println(auth.getPrincipal());
     var userDetails = (CustomUserDetails) auth.getPrincipal();
     return userDetails.getUser().getId();
   }

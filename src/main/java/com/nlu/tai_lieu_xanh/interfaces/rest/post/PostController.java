@@ -1,10 +1,8 @@
 package com.nlu.tai_lieu_xanh.interfaces.rest.post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +23,7 @@ import com.nlu.tai_lieu_xanh.application.post.dto.request.PostCreateRequest;
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostDetailResponse;
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
 import com.nlu.tai_lieu_xanh.application.post.service.PostService;
+import com.nlu.tai_lieu_xanh.application.shared.response.CursorResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,12 +36,9 @@ public class PostController {
   private final MDocService mDocService;
 
   @GetMapping
-  public ResponseEntity<List<PostResponse>> getAllPublishedPosts(
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "6") int size) {
-    Pageable pageable = PageRequest.of(page, size,
-        Sort.by(Sort.Direction.DESC, "createdDate"));
-    return ResponseEntity.ok(postService.findPublishedPosts(pageable));
+  public ResponseEntity<CursorResponse<PostResponse>> getAllPublishedPosts(
+      @RequestParam(required = false) LocalDateTime cursor) {
+    return ResponseEntity.ok(postService.findPublishedPosts(cursor));
   }
 
   @GetMapping("/{id}/download")
@@ -51,32 +47,7 @@ public class PostController {
     return ResponseEntity.ok(presignedUrl);
   }
 
-  /*
-   * @GetMapping("/search")
-   * public ResponseEntity<List<PostResponse>> searchPosts(
-   * 
-   * @RequestParam(required = false) String fileType,
-   * 
-   * @RequestParam(required = false) Long majorId,
-   * 
-   * @RequestParam(required = false) List<String> tags,
-   * 
-   * @RequestParam(required = false) String keyword,
-   * 
-   * @RequestParam(defaultValue = "0") int page,
-   * 
-   * @RequestParam(defaultValue = "10") int size,
-   * 
-   * @RequestParam(required = false, defaultValue = "createdDate") String sortBy,
-   * 
-   * @RequestParam(required = false, defaultValue = "DESC") String direction) {
-   * List<PostResponse> files = postService.searchPosts(fileType, majorId, tags,
-   * keyword, sortBy, direction, page, size);
-   * return ResponseEntity.ok(files);
-   * }
-   */
-
-  @GetMapping("/{id}/detail")
+  @GetMapping("/{id}")
   public ResponseEntity<PostDetailResponse> getPostDetailById(@PathVariable Long id) {
     return ResponseEntity.ok(postService.findPostDetail(id));
   }
@@ -93,8 +64,7 @@ public class PostController {
       @RequestParam("title") String title,
       @RequestParam("description") String description,
       @RequestParam("majorId") Long majorId,
-      @RequestParam("tags") String tags, // JSON string of tags
-      @RequestParam("authorId") Long authorId) throws JsonProcessingException {
+      @RequestParam("tags") String tags) throws JsonProcessingException {
     // Convert tags from JSON string to List<String>
     ObjectMapper objectMapper = new ObjectMapper();
     List<String> tagList = objectMapper.readValue(tags, new TypeReference<List<String>>() {

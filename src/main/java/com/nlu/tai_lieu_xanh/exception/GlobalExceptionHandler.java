@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,4 +20,11 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
   }
 
+  @ExceptionHandler(UsernameNotFoundException.class)
+  public ResponseEntity<Map<String, String>> handleUsernameNotFoundException(UserNotFoundException exception) {
+    Map<String, String> error = new HashMap<>();
+    error.put("error", "User not found");
+    error.put("message", exception.getMessage());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+  }
 }
