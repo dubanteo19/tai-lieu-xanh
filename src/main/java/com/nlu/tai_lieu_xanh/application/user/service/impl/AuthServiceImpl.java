@@ -1,19 +1,9 @@
 package com.nlu.tai_lieu_xanh.application.user.service.impl;
 
-import java.util.Random;
-import java.util.UUID;
-
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import com.nlu.tai_lieu_xanh.application.user.dto.request.RefreshTokenRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserLoginRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserUpdatePasswordRequest;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.LoginResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.AuthTokens;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterResponse;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.UserSummary;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.VerifyResponse;
@@ -25,9 +15,15 @@ import com.nlu.tai_lieu_xanh.exception.EmailExistException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.security.CustomUserDetails;
 import com.nlu.tai_lieu_xanh.utils.JwtUtil;
-
+import java.util.Random;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -75,63 +71,47 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public LoginResponse login(UserLoginRequest request) {
+  public AuthTokens login(UserLoginRequest request) {
     String email = request.email();
-    var user = userRepository
-        .findByEmail(email)
-        .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
-    if (user.getStatus() == UserStatus.INACTIVE ||
-        user.getStatus() == UserStatus.BAN) {
-      throw new AccessDeniedException("Account inactive or ban");
+    var user =
+        userRepository
+            .findByEmail(email)
+            .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
+    if (user.getStatus() == UserStatus.INACTIVE || user.getStatus() == UserStatus.BAN) {
+      throw new BadCredentialsException("Bad credentials");
     }
     if (!bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
       throw new BadCredentialsException("Bad credentials");
     }
     String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
     String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
-    var userSummary = new UserSummary(
-        user.getId(),
-        user.getEmail(),
-        user.getFullName(),
-        user.getAvatar());
     log.info("User {} login successfully", email);
-    return new LoginResponse(token, refreshToken, userSummary);
+    return new AuthTokens(token, refreshToken);
   }
 
   @Override
-  public LoginResponse refreshToken(RefreshTokenRequest request) {
+  public AuthTokens refreshToken(String refreshToken) {
     // Validate the refresh token
-    if (!jwtUtil.validateRefreshToken(request.refreshToken())) {
+    if (!jwtUtil.validateRefreshToken(refreshToken)) {
       throw new IllegalArgumentException("Invalid or expired refresh token");
     }
     // Extract the user's email from the refresh token
-    String email = jwtUtil.getUsername(request.refreshToken());
+    String email = jwtUtil.getUsername(refreshToken);
     // Retrieve the user by email
-    var user = userRepository
-        .findByEmail(email)
-        .orElseThrow(UserNotFoundException::new);
-    if (user == null) {
-      throw new IllegalArgumentException("User not found");
-    }
+    var user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     // Generate new tokens
     String newAccessToken = jwtUtil.generateToken(user.getEmail(), user.getRole());
+    String reRefreshToken = jwtUtil.generateRefreshToken(user.getEmail());
     log.info("User {} refresh token successfully", email);
-    var userSummary = new UserSummary(
-        user.getId(),
-        user.getEmail(),
-        user.getFullName(),
-        user.getAvatar());
-    return new LoginResponse(newAccessToken, request.refreshToken(), userSummary);
+    return new AuthTokens(newAccessToken, reRefreshToken);
   }
 
   @Override
   public Long getCurrentUserId() {
     var auth = SecurityContextHolder.getContext().getAuthentication();
-    if (auth == null || !auth.isAuthenticated()) {
+    if (auth == null || !(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
       throw new AccessDeniedException("User not authenticated");
     }
-    System.out.println(auth.getPrincipal());
-    var userDetails = (CustomUserDetails) auth.getPrincipal();
     return userDetails.getUser().getId();
   }
 
@@ -158,4 +138,13 @@ public class AuthServiceImpl implements AuthService {
     user.updatePassword(encodedPassword);
   }
 
+  @Override
+  public UserSummary me() {
+    var auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth == null || !(auth.getPrincipal() instanceof CustomUserDetails userDetails)) {
+      throw new AccessDeniedException("User not authenticated");
+    }
+    var user = userDetails.getUser();
+    return userMapper.toUserSummary(user);
+  }
 }

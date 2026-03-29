@@ -1,11 +1,5 @@
 package com.nlu.tai_lieu_xanh.application.post.service.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.nlu.tai_lieu_xanh.application.major.service.MajorService;
 import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
 import com.nlu.tai_lieu_xanh.application.notification.service.NotificationService;
@@ -24,10 +18,13 @@ import com.nlu.tai_lieu_xanh.exception.PostNotFoundException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewEvent;
 import com.nlu.tai_lieu_xanh.producer.PreviewMessageProducer;
-
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -57,10 +54,8 @@ public class PostServiceImpl implements PostService {
     var mdoc = mDocService.uploadDocument(file, currentUserId);
     post.setMDoc(mdoc);
     var savedPost = postRepository.save(post);
-    var previewMessage = new PreviewEvent(
-        mdoc.getId(),
-        Math.min(mdoc.getPages(), 5),
-        mdoc.getObjectName());
+    var previewMessage =
+        new PreviewEvent(mdoc.getId(), Math.min(mdoc.getPages(), 5), mdoc.getObjectName());
     previewMessageProducer.sendCreatePreviewTask(previewMessage);
     // TODO notificationService.createNotification(postRequest.authorId(), "Tài liệu
     // của bạn đang được chờ duyệt");
@@ -84,21 +79,25 @@ public class PostServiceImpl implements PostService {
       var lastPost = posts.get(posts.size() - 1);
       nextCursor = lastPost.getCreatedDate();
     }
-    var items = posts.stream().map(p -> {
-      var postTagReponseList = tagMapper.toTagResponseList(p.getTags());
-      return postMapper.toPostResponse(p, postTagReponseList);
-    }).toList();
+    var items =
+        posts.stream()
+            .map(
+                p -> {
+                  var postTagReponseList = tagMapper.toTagResponseList(p.getTags());
+                  return postMapper.toPostResponse(p, postTagReponseList);
+                })
+            .toList();
     return new CursorResponse<>(items, nextCursor, hasNext);
   }
 
   @Override
   @Transactional
   public PostDetailResponse findPostDetail(Long postId) {
-    var post = postRepository
-        .findById(postId)
-        .orElseThrow(() -> new PostNotFoundException("post not found"));
+    var post =
+        postRepository
+            .findById(postId)
+            .orElseThrow(() -> new PostNotFoundException("post not found"));
     var postTagReponseList = tagMapper.toTagResponseList(post.getTags());
     return postMapper.toPostDetailResponse(post, postTagReponseList);
   }
-
 }

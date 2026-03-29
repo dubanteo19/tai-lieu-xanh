@@ -1,11 +1,11 @@
 package com.nlu.tai_lieu_xanh.application.user.service;
 
-import com.nlu.tai_lieu_xanh.application.user.dto.request.RefreshTokenRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserCreateRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserLoginRequest;
 import com.nlu.tai_lieu_xanh.application.user.dto.request.UserUpdatePasswordRequest;
-import com.nlu.tai_lieu_xanh.application.user.dto.response.LoginResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.AuthTokens;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.RegisterResponse;
+import com.nlu.tai_lieu_xanh.application.user.dto.response.UserSummary;
 import com.nlu.tai_lieu_xanh.application.user.dto.response.VerifyResponse;
 
 public interface AuthService {
@@ -13,13 +13,15 @@ public interface AuthService {
 
   VerifyResponse verifyAccount(String token);
 
-  LoginResponse login(UserLoginRequest request);
+  AuthTokens login(UserLoginRequest request);
 
   void updatePassword(UserUpdatePasswordRequest userUpdatePasswordRequest);
 
-  LoginResponse refreshToken(RefreshTokenRequest request);
+  AuthTokens refreshToken(String refreshToken);
 
   void forgotPassword(String email);
 
   Long getCurrentUserId();
+
+  UserSummary me();
 }

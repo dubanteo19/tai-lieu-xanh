@@ -1,27 +1,22 @@
 package com.nlu.tai_lieu_xanh.application.mdoc.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
 import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
 import com.nlu.tai_lieu_xanh.config.RabbitMQConfig;
 import com.nlu.tai_lieu_xanh.domain.mdoc.FileType;
 import com.nlu.tai_lieu_xanh.domain.mdoc.MDoc;
 import com.nlu.tai_lieu_xanh.domain.mdoc.MDocRepository;
-import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
 import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewGeneratedEvent;
 import com.nlu.tai_lieu_xanh.infrastructure.storage.MinioStorageService;
 import com.nlu.tai_lieu_xanh.utils.PageExtractor;
 import com.nlu.tai_lieu_xanh.utils.UrlPreviewer;
-
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +28,7 @@ public class MDocServiceImpl implements MDocService {
 
   @Override
   @RabbitListener(queues = RabbitMQConfig.PREVIEW_GENERATED_QUEUE)
+  @Transactional
   public void handlePreivewGeneratedEvent(PreviewGeneratedEvent event) {
     var mdoc = findById(event.mDocId());
 
@@ -42,8 +38,7 @@ public class MDocServiceImpl implements MDocService {
 
   @Override
   public MDoc findById(Long id) {
-    return mDocRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException());
+    return mDocRepository.findById(id).orElseThrow(() -> new RuntimeException());
   }
 
   @Override
@@ -71,6 +66,6 @@ public class MDocServiceImpl implements MDocService {
   @Override
   public PresignedUrlRes download(Long id) {
     return null;
-  };
-
+  }
+  ;
 }

@@ -40,8 +40,7 @@ public class PostMapper {
         formatedCreatedDate);
     return new PostDetailResponse(
         post.getId(),
-        post.getTitle(),
-        UrlPreviewer.generateThumbnail(mdoc.id()),
+        post.getTitle(), UrlPreviewer.generateThumbnail(mdoc.id()),
         post.getPostStatus(),
         major,
         author,

@@ -9,7 +9,7 @@ import com.nlu.tai_lieu_xanh.domain.post.PostStatus;
 public record PostResponse(
     Long id,
     String title,
-    String thumb,
+    String thumbnail,
     PostStatus status,
     MajorResponse major,
     AuthorResponse author,
