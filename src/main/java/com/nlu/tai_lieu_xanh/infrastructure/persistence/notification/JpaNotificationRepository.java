@@ -1,14 +1,11 @@
 package com.nlu.tai_lieu_xanh.infrastructure.persistence.notification;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Repository;
-
 import com.nlu.tai_lieu_xanh.domain.notification.Notification;
 import com.nlu.tai_lieu_xanh.domain.notification.NotificationRepository;
-
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
@@ -29,5 +26,4 @@ public class JpaNotificationRepository implements NotificationRepository {
   public List<Notification> findByUserId(Long userId) {
     return springDataNotificationRepository.findByUserId(userId);
   }
-
 }

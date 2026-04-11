@@ -1,14 +1,11 @@
 package com.nlu.tai_lieu_xanh.application.notification.mapper;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.nlu.tai_lieu_xanh.application.notification.dto.response.NotificationResponse;
 import com.nlu.tai_lieu_xanh.application.shared.SharedMapper;
 import com.nlu.tai_lieu_xanh.domain.notification.Notification;
-
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -24,10 +21,8 @@ public class NotificationMapper {
         createdDate);
   }
 
-  public List<NotificationResponse> toNotificationResponseList(List<Notification> notificationList) {
-    return notificationList
-        .stream()
-        .map(this::toNotificationResponse)
-        .toList();
+  public List<NotificationResponse> toNotificationResponseList(
+      List<Notification> notificationList) {
+    return notificationList.stream().map(this::toNotificationResponse).toList();
   }
 }

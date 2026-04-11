@@ -2,7 +2,6 @@ package com.nlu.tai_lieu_xanh.domain.notification;
 
 import com.nlu.tai_lieu_xanh.domain.user.User;
 import com.nlu.tai_lieu_xanh.infrastructure.persistence.AbstractModel;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,13 +17,13 @@ public class Notification extends AbstractModel {
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;
+
   private String content;
 
   @Enumerated(EnumType.STRING)
   private NotificationStatus status = NotificationStatus.UNREAD;
 
-  protected Notification() {
-  }
+  protected Notification() {}
 
   private Notification(User user, String content) {
     this.user = user;

@@ -1,16 +1,13 @@
 package com.nlu.tai_lieu_xanh.infrastructure.persistence.post;
 
+import com.nlu.tai_lieu_xanh.domain.post.Post;
+import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import com.nlu.tai_lieu_xanh.domain.post.Post;
-import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
-
-import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
@@ -61,5 +58,4 @@ public class JpaPostRepository implements PostRepository {
   public List<Post> findNextPosts(LocalDateTime cursor, Pageable pageable) {
     return springDataPostRepository.findNextPosts(cursor, pageable);
   }
-
 }

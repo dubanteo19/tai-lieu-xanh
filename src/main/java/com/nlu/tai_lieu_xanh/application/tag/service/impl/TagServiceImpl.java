@@ -1,18 +1,14 @@
 package com.nlu.tai_lieu_xanh.application.tag.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.stereotype.Service;
-
 import com.nlu.tai_lieu_xanh.application.tag.dto.response.TagResponse;
 import com.nlu.tai_lieu_xanh.application.tag.mapper.TagMapper;
 import com.nlu.tai_lieu_xanh.application.tag.service.TagService;
 import com.nlu.tai_lieu_xanh.domain.tag.Tag;
 import com.nlu.tai_lieu_xanh.domain.tag.TagRepository;
-
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -37,20 +33,20 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public Set<Tag> getOrSaveTags(List<String> tagNames) {
+  public List<Tag> getOrSaveTags(List<String> tagNames) {
     var existingTags = tagRepository.findByNameIn(tagNames);
     var existingTagNames = existingTags.stream().map(Tag::getName).toList();
-    var newTags = tagNames.stream()
-        .filter(tagName -> !existingTagNames.contains(tagName))
-        .map(this::save)
-        .toList();
+    var newTags =
+        tagNames.stream()
+            .filter(tagName -> !existingTagNames.contains(tagName))
+            .map(this::save)
+            .toList();
     existingTags.addAll(newTags);
-    return new HashSet<>(existingTags);
+    return new ArrayList<>(existingTags);
   }
 
   @Override
   public List<TagResponse> findAll() {
-    var tagSet = new HashSet<>(tagRepository.findAll());
-    return tagMapper.toTagResponseList(tagSet);
+    return tagMapper.toTagResponseList(tagRepository.findAll());
   }
 }

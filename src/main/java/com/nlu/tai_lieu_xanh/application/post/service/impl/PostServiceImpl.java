@@ -1,6 +1,5 @@
 package com.nlu.tai_lieu_xanh.application.post.service.impl;
 
-import com.nlu.tai_lieu_xanh.application.major.service.MajorService;
 import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
 import com.nlu.tai_lieu_xanh.application.notification.service.NotificationService;
 import com.nlu.tai_lieu_xanh.application.post.dto.request.PostCreateRequest;
@@ -12,12 +11,16 @@ import com.nlu.tai_lieu_xanh.application.shared.response.CursorResponse;
 import com.nlu.tai_lieu_xanh.application.tag.mapper.TagMapper;
 import com.nlu.tai_lieu_xanh.application.tag.service.TagService;
 import com.nlu.tai_lieu_xanh.application.user.service.AuthService;
+import com.nlu.tai_lieu_xanh.domain.major.Major;
+import com.nlu.tai_lieu_xanh.domain.mdoc.MDoc;
+import com.nlu.tai_lieu_xanh.domain.post.Post;
 import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
 import com.nlu.tai_lieu_xanh.domain.user.UserRepository;
 import com.nlu.tai_lieu_xanh.exception.PostNotFoundException;
 import com.nlu.tai_lieu_xanh.exception.UserNotFoundException;
 import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewEvent;
 import com.nlu.tai_lieu_xanh.producer.PreviewMessageProducer;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -33,34 +36,39 @@ public class PostServiceImpl implements PostService {
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final AuthService authService;
-  private final MajorService majorService;
   private final NotificationService notificationService;
+  private final EntityManager entityManager;
   private final TagService tagService;
   private final TagMapper tagMapper;
   private final MDocService mDocService;
   private final PostMapper postMapper;
   private final PreviewMessageProducer previewMessageProducer;
 
-  @Transactional
-  public PostResponse create(PostCreateRequest postRequest, MultipartFile file) {
-    var post = postMapper.toPost(postRequest);
+  @Override
+  public PostResponse create(PostCreateRequest request, MultipartFile file) {
     Long currentUserId = authService.getCurrentUserId();
-    var author = userRepository.findById(currentUserId).orElseThrow(UserNotFoundException::new);
-    var major = majorService.findById(postRequest.majorId());
-    var tags = tagService.getOrSaveTags(postRequest.tags());
-    post.setAuthor(author);
-    post.setMajor(major);
-    post.setTags(tags);
     var mdoc = mDocService.uploadDocument(file, currentUserId);
-    post.setMDoc(mdoc);
-    var savedPost = postRepository.save(post);
+    var savedPost = performSave(request, mdoc, currentUserId);
     var previewMessage =
         new PreviewEvent(mdoc.getId(), Math.min(mdoc.getPages(), 5), mdoc.getObjectName());
     previewMessageProducer.sendCreatePreviewTask(previewMessage);
-    // TODO notificationService.createNotification(postRequest.authorId(), "Tài liệu
-    // của bạn đang được chờ duyệt");
-    var tagReponseList = tagMapper.toTagResponseList(post.getTags());
+    notificationService.sendNotification(currentUserId, "Tài liệu của bạn đang được chờ duyệt");
+    var tagReponseList = tagMapper.toTagResponseList(savedPost.getTags());
     return postMapper.toPostResponse(savedPost, tagReponseList);
+  }
+
+  @Override
+  @Transactional
+  public Post performSave(PostCreateRequest request, MDoc mdoc, Long userId) {
+    var post = postMapper.toPost(request);
+    var author = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    var major = entityManager.getReference(Major.class, request.majorId());
+    var tags = tagService.getOrSaveTags(request.tags());
+    post.setAuthor(author);
+    post.setMajor(major);
+    post.setTags(tags);
+    post.setMDoc(mdoc);
+    return postRepository.save(post);
   }
 
   @Transactional
@@ -70,22 +78,18 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public CursorResponse<PostResponse> findPublishedPosts(LocalDateTime cursor) {
-    int size = 10;
-    var pageable = PageRequest.of(0, size);
+    int SIZE = 10;
+    var pageable = PageRequest.of(0, SIZE + 1);
     var posts = postRepository.findNextPosts(cursor, pageable);
-    boolean hasNext = posts.size() == size;
+    boolean hasNext = posts.size() > SIZE;
+    var limitPosts = hasNext ? posts.subList(0, SIZE) : posts;
     LocalDateTime nextCursor = null;
     if (hasNext) {
-      var lastPost = posts.get(posts.size() - 1);
-      nextCursor = lastPost.getCreatedDate();
+      nextCursor = limitPosts.getLast().getCreatedDate();
     }
     var items =
-        posts.stream()
-            .map(
-                p -> {
-                  var postTagReponseList = tagMapper.toTagResponseList(p.getTags());
-                  return postMapper.toPostResponse(p, postTagReponseList);
-                })
+        limitPosts.stream()
+            .map(p -> postMapper.toPostResponse(p, tagMapper.toTagResponseList(p.getTags())))
             .toList();
     return new CursorResponse<>(items, nextCursor, hasNext);
   }

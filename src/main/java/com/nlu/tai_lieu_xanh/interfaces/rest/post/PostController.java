@@ -1,17 +1,5 @@
 package com.nlu.tai_lieu_xanh.interfaces.rest.post;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +12,17 @@ import com.nlu.tai_lieu_xanh.application.post.dto.response.PostDetailResponse;
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
 import com.nlu.tai_lieu_xanh.application.post.service.PostService;
 import com.nlu.tai_lieu_xanh.application.shared.response.CursorResponse;
-
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/posts")
@@ -64,11 +61,11 @@ public class PostController {
       @RequestParam("title") String title,
       @RequestParam("description") String description,
       @RequestParam("majorId") Long majorId,
-      @RequestParam("tags") String tags) throws JsonProcessingException {
+      @RequestParam("tags") String tags)
+      throws JsonProcessingException {
     // Convert tags from JSON string to List<String>
     ObjectMapper objectMapper = new ObjectMapper();
-    List<String> tagList = objectMapper.readValue(tags, new TypeReference<List<String>>() {
-    });
+    List<String> tagList = objectMapper.readValue(tags, new TypeReference<List<String>>() {});
 
     var postRequest = new PostCreateRequest(title, description, majorId, tagList);
 
@@ -79,5 +76,4 @@ public class PostController {
   public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long postId) {
     return ResponseEntity.ok(commentService.getAllByPostId(postId));
   }
-
 }
