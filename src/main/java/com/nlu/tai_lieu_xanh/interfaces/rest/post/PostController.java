@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nlu.tai_lieu_xanh.application.comment.dto.response.CommentResponse;
 import com.nlu.tai_lieu_xanh.application.comment.service.CommentService;
-import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
+import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlResponse;
 import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
 import com.nlu.tai_lieu_xanh.application.post.dto.request.PostCreateRequest;
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostDetailResponse;
@@ -39,7 +39,7 @@ public class PostController {
   }
 
   @GetMapping("/{id}/download")
-  public ResponseEntity<PresignedUrlRes> downloadDocument(@PathVariable Long id) {
+  public ResponseEntity<PresignedUrlResponse> downloadDocument(@PathVariable Long id) {
     var presignedUrl = mDocService.download(id);
     return ResponseEntity.ok(presignedUrl);
   }

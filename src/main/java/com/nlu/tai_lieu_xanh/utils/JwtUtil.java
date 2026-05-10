@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
-  private static final long ACCESS_TOKEN_EXPIRATION = 5000  ; // 60 minutes
+  private static final long ACCESS_TOKEN_EXPIRATION = 5000; // 60 minutes
   private static final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7 days
 
   @Value("${jwt.secret}")

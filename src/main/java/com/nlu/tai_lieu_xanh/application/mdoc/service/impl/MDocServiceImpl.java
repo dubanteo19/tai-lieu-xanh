@@ -1,6 +1,6 @@
 package com.nlu.tai_lieu_xanh.application.mdoc.service.impl;
 
-import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
+import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlResponse;
 import com.nlu.tai_lieu_xanh.application.mdoc.service.MDocService;
 import com.nlu.tai_lieu_xanh.config.RabbitMQConfig;
 import com.nlu.tai_lieu_xanh.domain.mdoc.FileType;
@@ -49,8 +49,7 @@ public class MDocServiceImpl implements MDocService {
     var extension = fileName.substring(fileName.lastIndexOf("."));
     var fileType = extension.equalsIgnoreCase(".pdf") ? FileType.PDF : FileType.DOCX;
     long fileSize = file.getSize(); // In bytes
-    int pages;
-    pages = PageExtractor.extractPageCount(file);
+    int pages = PageExtractor.extractPageCount(file);
     var mDoc = MDoc.create(fileName, objectName, fileSize, pages, fileType);
     log.info("upload document successfully");
     return mDocRepository.save(mDoc);
@@ -64,8 +63,10 @@ public class MDocServiceImpl implements MDocService {
   }
 
   @Override
-  public PresignedUrlRes download(Long id) {
-    return null;
+  public PresignedUrlResponse download(Long id) {
+    var mdoc = findById(id);
+    log.info("downloading object", mdoc.getObjectName());
+    return new PresignedUrlResponse(minioStorageService.getFileUrl(mdoc.getObjectName()));
   }
   ;
 }

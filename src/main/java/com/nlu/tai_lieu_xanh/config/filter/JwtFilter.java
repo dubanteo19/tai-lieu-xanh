@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
         skip
             ? "Skipping JWT filter for public endpoint %s".formatted(path)
             : "Applying JWT filter filter to %s".formatted(path);
-    log.info(logMessage);
+    // log.info(logMessage);
     return skip;
   }
 

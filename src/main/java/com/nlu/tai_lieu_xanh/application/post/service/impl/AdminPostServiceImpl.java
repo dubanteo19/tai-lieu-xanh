@@ -1,19 +1,16 @@
 package com.nlu.tai_lieu_xanh.application.post.service.impl;
 
-import java.util.List;
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import com.nlu.tai_lieu_xanh.application.post.dto.response.PostResponse;
 import com.nlu.tai_lieu_xanh.application.post.mapper.PostMapper;
 import com.nlu.tai_lieu_xanh.application.post.service.AdminPostService;
 import com.nlu.tai_lieu_xanh.domain.post.Post;
 import com.nlu.tai_lieu_xanh.domain.post.PostRepository;
 import com.nlu.tai_lieu_xanh.exception.PostNotFoundException;
-
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +52,8 @@ public class AdminPostServiceImpl implements AdminPostService {
 
   @Override
   public Post findById(Long id) {
-    return postRepository.findById(id)
+    return postRepository
+        .findById(id)
         .orElseThrow(() -> new PostNotFoundException("post with id " + id + " not found"));
   }
 

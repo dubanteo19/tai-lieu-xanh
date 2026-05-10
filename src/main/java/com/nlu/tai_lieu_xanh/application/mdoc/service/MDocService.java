@@ -1,12 +1,10 @@
 package com.nlu.tai_lieu_xanh.application.mdoc.service;
 
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
-
-import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlRes;
+import com.nlu.tai_lieu_xanh.application.mdoc.dto.response.PresignedUrlResponse;
 import com.nlu.tai_lieu_xanh.domain.mdoc.MDoc;
 import com.nlu.tai_lieu_xanh.infrastructure.messaging.event.mdoc.PreviewGeneratedEvent;
+import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface MDocService {
   void handlePreivewGeneratedEvent(PreviewGeneratedEvent event);
@@ -17,5 +15,5 @@ public interface MDocService {
 
   List<String> getPreivewUrls(Long id);
 
-  PresignedUrlRes download(Long id);
+  PresignedUrlResponse download(Long id);
 }
